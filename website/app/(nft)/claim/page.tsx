@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { 
   Wallet, Shield, Zap, Box, X,
   Search, Clock, 
-  TrendingUp, ArrowUpRight, Database,
+  TrendingUp, ArrowUpRight,
   Twitter, Youtube, Linkedin, Instagram
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 
 // Mock data types
 type RequestItem = {
@@ -96,11 +93,9 @@ export default function ClaimPage() {
   };
 
   return (
-    <main className="min-h-screen bg-black text-zinc-100 selection:bg-[#5800C3]/30">
-      <Navbar />
-      
-      <div className="container mx-auto px-4 py-24 md:px-6 md:py-32">
-        <div className="mx-auto max-w-3xl text-center">
+    <main className="min-h-screen bg-black text-zinc-100 p-8 selection:bg-[#5800C3]/30">
+      <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-3xl text-center mb-12">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -113,14 +108,15 @@ export default function ClaimPage() {
               Own the rights to specific data sources. Mint an NFT that represents a Twitter profile, YouTube channel, or TikTok account and earn rewards when its data is queried.
             </p>
           </motion.div>
+        </div>
 
-          {/* Input Section */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm mb-16"
-          >
+        {/* Input Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-sm mb-16 max-w-3xl mx-auto"
+        >
             <form onSubmit={handleClaim} className="flex flex-col gap-4">
               <label htmlFor="source-url" className="sr-only">Data Source URL</label>
               <div className="relative">
@@ -181,11 +177,10 @@ export default function ClaimPage() {
               </p>
             </div>
           </motion.div>
-        </div>
 
         {/* Requests Feed Section */}
-        <div className="border-t border-white/10 pt-24">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+        <div className="border-t border-white/10 pt-16">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-6">
             <div>
               <motion.div 
                 initial={{ opacity: 0, x: -20 }}
@@ -374,8 +369,7 @@ export default function ClaimPage() {
           </div>
         )}
       </AnimatePresence>
-
-      <Footer />
     </main>
   );
 }
+
