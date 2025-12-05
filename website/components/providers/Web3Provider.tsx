@@ -49,6 +49,8 @@ async function initAppKit(): Promise<boolean> {
     },
     features: {
       analytics: true,
+      email: false,
+      socials: false,
     },
     themeMode: "dark",
     themeVariables: {

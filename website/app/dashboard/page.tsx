@@ -129,18 +129,7 @@ export default function DashboardPage() {
             title="Processed"
             value={stats?.processed?.successful ?? 0}
             subtitle="successful requests"
-            details={
-              <div className="flex items-center gap-4">
-                <span className="flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                  {stats?.processed?.notFound ?? 0} not found
-                </span>
-                <span className="flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3 text-red-500" />
-                  {stats?.processed?.errors ?? 0} errors
-                </span>
-              </div>
-            }
+           
             variant="success"
           />
         </div>
