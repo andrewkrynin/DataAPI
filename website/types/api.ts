@@ -4,27 +4,32 @@
 
 // POST /auth/request-key - Request a new API key
 export interface RequestApiKeyRequest {
+  email: string;
   name: string;
-  description?: string;
 }
 
 export interface ApiKey {
   id: string;
-  key: string;
-  name: string;
+  key?: string;
+  keyPrefix: string;
+  name: string | null;
   description?: string;
   createdAt: string;
-  lastUsedAt?: string;
+  lastUsedAt: string | null;
   isActive: boolean;
 }
 
 export interface RequestApiKeyResponse {
-  apiKey: ApiKey;
+  message: string;
+  apiKey: string;
+  keyPrefix: string;
+  credits: number;
+  emailSent: boolean;
 }
 
 // GET /auth/api-keys - List all API keys
 export interface ApiKeysResponse {
-  apiKeys: ApiKey[];
+  keys: ApiKey[];
 }
 
 // DELETE /auth/api-keys/{id} - Revoke an API key

@@ -6,8 +6,6 @@ import {
   Plus,
   Copy,
   Trash2,
-  Eye,
-  EyeOff,
   CheckCircle,
   AlertCircle,
 } from "lucide-react";
@@ -22,10 +20,9 @@ export default function ApiKeysPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newKeyEmail, setNewKeyEmail] = useState("");
   const [newKeyName, setNewKeyName] = useState("");
-  const [newKeyDescription, setNewKeyDescription] = useState("");
   const [createdKey, setCreatedKey] = useState<string | null>(null);
-  const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,7 +36,7 @@ export default function ApiKeysPage() {
     setIsLoading(true);
     try {
       const response = await authApi.getApiKeys(accessToken);
-      setApiKeys(response.apiKeys);
+      setApiKeys(response.keys);
     } catch (err) {
       console.error("Error fetching API keys:", err);
       setError("Failed to load API keys");
@@ -49,19 +46,20 @@ export default function ApiKeysPage() {
   }
 
   async function handleCreateKey() {
-    if (!accessToken || !newKeyName.trim()) return;
+    if (!accessToken || !newKeyEmail.trim() || !newKeyName.trim()) return;
 
     setIsCreating(true);
     setError(null);
     try {
       const response = await authApi.requestApiKey(accessToken, {
+        email: newKeyEmail.trim(),
         name: newKeyName.trim(),
-        description: newKeyDescription.trim() || undefined,
       });
-      setCreatedKey(response.apiKey.key);
-      setApiKeys((prev) => [...prev, response.apiKey]);
+      setCreatedKey(response.apiKey);
+      // Refresh the list to get the new key
+      await fetchApiKeys();
+      setNewKeyEmail("");
       setNewKeyName("");
-      setNewKeyDescription("");
     } catch (err) {
       console.error("Error creating API key:", err);
       setError("Failed to create API key");
@@ -82,18 +80,6 @@ export default function ApiKeysPage() {
     }
   }
 
-  function toggleKeyVisibility(id: string) {
-    setVisibleKeys((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(id)) {
-        newSet.delete(id);
-      } else {
-        newSet.add(id);
-      }
-      return newSet;
-    });
-  }
-
   async function copyToClipboard(key: string, id: string) {
     try {
       await navigator.clipboard.writeText(key);
@@ -103,19 +89,6 @@ export default function ApiKeysPage() {
       console.error("Failed to copy");
     }
   }
-
-  function maskKey(key: string) {
-    if (key.length <= 8) return "••••••••";
-    return key.slice(0, 4) + "••••••••" + key.slice(-4);
-  }
-
-  // if (!isLoading && (!apiKeys || apiKeys.length === 0)) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
-  //       <p className="text-gray-500">No API keys available.</p>
-  //     </div>
-  //   );
-  // }
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -180,7 +153,7 @@ export default function ApiKeysPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-white">
-                          {apiKey.name}
+                          {apiKey.name || "Unnamed Key"}
                         </span>
                         {!apiKey.isActive && (
                           <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs text-red-400">
@@ -188,22 +161,8 @@ export default function ApiKeysPage() {
                           </span>
                         )}
                       </div>
-                      <div className="mt-1 flex items-center gap-2 font-mono text-sm text-gray-400">
-                        <span>
-                          {visibleKeys.has(apiKey.id)
-                            ? apiKey.key
-                            : maskKey(apiKey.key)}
-                        </span>
-                        <button
-                          onClick={() => toggleKeyVisibility(apiKey.id)}
-                          className="text-gray-500 hover:text-gray-400 transition-colors"
-                        >
-                          {visibleKeys.has(apiKey.id) ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </button>
+                      <div className="mt-1 font-mono text-sm text-gray-400">
+                        <span>{apiKey.keyPrefix}••••••••</span>
                       </div>
                       {apiKey.description && (
                         <p className="mt-1 text-sm text-gray-500">
@@ -309,27 +268,27 @@ export default function ApiKeysPage() {
               <div className="mt-6 space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Key Name <span className="text-red-400">*</span>
+                    Email <span className="text-red-400">*</span>
                   </label>
                   <input
-                    type="text"
-                    value={newKeyName}
-                    onChange={(e) => setNewKeyName(e.target.value)}
-                    placeholder="e.g., Production API Key"
+                    type="email"
+                    value={newKeyEmail}
+                    onChange={(e) => setNewKeyEmail(e.target.value)}
+                    placeholder="developer@example.com"
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-500 focus:border-[#5800C3]/50 focus:outline-none focus:ring-1 focus:ring-[#5800C3]/50"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Description (optional)
+                    Name <span className="text-red-400">*</span>
                   </label>
-                  <textarea
-                    value={newKeyDescription}
-                    onChange={(e) => setNewKeyDescription(e.target.value)}
-                    placeholder="What will this key be used for?"
-                    rows={3}
-                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-500 focus:border-[#5800C3]/50 focus:outline-none focus:ring-1 focus:ring-[#5800C3]/50 resize-none"
+                  <input
+                    type="text"
+                    value={newKeyName}
+                    onChange={(e) => setNewKeyName(e.target.value)}
+                    placeholder="John Doe"
+                    className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-500 focus:border-[#5800C3]/50 focus:outline-none focus:ring-1 focus:ring-[#5800C3]/50"
                   />
                 </div>
 
@@ -337,8 +296,8 @@ export default function ApiKeysPage() {
                   <button
                     onClick={() => {
                       setShowCreateModal(false);
+                      setNewKeyEmail("");
                       setNewKeyName("");
-                      setNewKeyDescription("");
                     }}
                     className="flex-1 rounded-lg border border-white/10 px-4 py-2.5 text-sm font-medium text-white hover:bg-white/5 transition-colors"
                   >
@@ -346,7 +305,7 @@ export default function ApiKeysPage() {
                   </button>
                   <button
                     onClick={handleCreateKey}
-                    disabled={!newKeyName.trim() || isCreating}
+                    disabled={!newKeyEmail.trim() || !newKeyName.trim() || isCreating}
                     className="flex-1 rounded-lg bg-[#5800C3] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#6B00E8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   >
                     {isCreating ? "Creating..." : "Create Key"}

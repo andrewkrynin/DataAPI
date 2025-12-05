@@ -127,9 +127,8 @@ export default function DashboardPage() {
           <StatsCard
             icon={<CheckCircle className="h-5 w-5" />}
             title="Processed"
-            value={stats?.processed?.successful ?? 0}
+            value={credits?.totalUsed ?? '-'}
             subtitle="successful requests"
-           
             variant="success"
           />
         </div>
@@ -140,10 +139,10 @@ export default function DashboardPage() {
             data={
               analytics
                 ? {
-                    daily: analytics.daily,
-                    hourly: analytics.hourly,
-                    responseTime: analytics.responseTime,
-                  }
+                  daily: analytics.daily,
+                  hourly: analytics.hourly,
+                  responseTime: analytics.responseTime,
+                }
                 : undefined
             }
           />
