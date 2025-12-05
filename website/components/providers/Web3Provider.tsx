@@ -1,27 +1,42 @@
 "use client";
 
-import { type ReactNode, useEffect, useState, createContext, useContext } from "react";
+import { type ReactNode, useEffect, useState, createContext, useContext, useCallback } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // Set up queryClient
 const queryClient = new QueryClient();
 
-// Context to share AppKit initialization state
+// Context to share AppKit state and methods
 interface AppKitContextType {
   isReady: boolean;
+  openModal: () => Promise<void>;
+  address: string | null;
+  isConnected: boolean;
 }
 
-const AppKitContext = createContext<AppKitContextType>({ isReady: false });
+const AppKitContext = createContext<AppKitContextType>({
+  isReady: false,
+  openModal: async () => {},
+  address: null,
+  isConnected: false,
+});
 
-export function useAppKitReady() {
+export function useWallet() {
   return useContext(AppKitContext);
 }
 
-// Initialize AppKit only on client side
+// Keep for backwards compatibility
+export function useAppKitReady() {
+  const { isReady } = useContext(AppKitContext);
+  return { isReady };
+}
+
+// Store appKit instance globally
+let appKitInstance: ReturnType<typeof import("@reown/appkit/react").createAppKit> | null = null;
 let initialized = false;
 
-async function initAppKit(): Promise<boolean> {
-  if (initialized || typeof window === "undefined") return initialized;
+async function initAppKit() {
+  if (initialized || typeof window === "undefined") return;
 
   const { createAppKit } = await import("@reown/appkit/react");
   const { EthersAdapter } = await import("@reown/appkit-adapter-ethers");
@@ -31,12 +46,12 @@ async function initAppKit(): Promise<boolean> {
 
   if (!projectId) {
     console.warn("WalletConnect Project ID is not defined");
-    return false;
+    return;
   }
 
   const ethersAdapter = new EthersAdapter();
 
-  createAppKit({
+  appKitInstance = createAppKit({
     adapters: [ethersAdapter],
     projectId,
     networks: [bsc],
@@ -60,7 +75,6 @@ async function initAppKit(): Promise<boolean> {
   });
 
   initialized = true;
-  return true;
 }
 
 interface Web3ProviderProps {
@@ -69,14 +83,74 @@ interface Web3ProviderProps {
 
 export function Web3Provider({ children }: Web3ProviderProps) {
   const [isReady, setIsReady] = useState(false);
+  const [address, setAddress] = useState<string | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
-    initAppKit().then((success) => setIsReady(success));
+    initAppKit().then(() => {
+      setIsReady(true);
+    });
+  }, []);
+
+  // Listen for account changes
+  useEffect(() => {
+    if (!isReady || typeof window === "undefined") return;
+
+    const checkConnection = async () => {
+      if (window.ethereum) {
+        try {
+          const accounts = await window.ethereum.request?.({ method: "eth_accounts" }) as string[] | undefined;
+          if (accounts && accounts.length > 0) {
+            setAddress(accounts[0]);
+            setIsConnected(true);
+          } else {
+            setAddress(null);
+            setIsConnected(false);
+          }
+        } catch {
+          setAddress(null);
+          setIsConnected(false);
+        }
+      }
+    };
+
+    checkConnection();
+
+    // Listen for account changes
+    const handleAccountsChanged = (accounts: string[]) => {
+      if (accounts.length > 0) {
+        setAddress(accounts[0]);
+        setIsConnected(true);
+      } else {
+        setAddress(null);
+        setIsConnected(false);
+      }
+    };
+
+    if (window.ethereum?.on) {
+      window.ethereum.on("accountsChanged", handleAccountsChanged);
+    }
+
+    // Poll for changes (backup)
+    const interval = setInterval(checkConnection, 2000);
+
+    return () => {
+      clearInterval(interval);
+      if (window.ethereum?.removeListener) {
+        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      }
+    };
+  }, [isReady]);
+
+  const openModal = useCallback(async () => {
+    if (appKitInstance) {
+      await appKitInstance.open();
+    }
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppKitContext.Provider value={{ isReady }}>
+      <AppKitContext.Provider value={{ isReady, openModal, address, isConnected }}>
         {children}
       </AppKitContext.Provider>
     </QueryClientProvider>

@@ -18,6 +18,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
+import { WalletPanel } from "./WalletPanel";
 
 interface NavItem {
   label: string;
@@ -72,7 +73,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </Link>
           )}
           <button
+            type="button"
             onClick={() => setIsCollapsed(!isCollapsed)}
+            aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             className="p-2 rounded-lg hover:bg-white/5 transition-colors text-gray-400 hover:text-white"
           >
             <ChevronLeft
@@ -108,9 +111,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-3">
+        {/* Wallet & Logout */}
+        <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-3 space-y-3">
+          {/* Wallet Panel */}
+          <WalletPanel isCollapsed={isCollapsed} />
+
+          {/* Logout */}
           <button
+            type="button"
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-all"
           >

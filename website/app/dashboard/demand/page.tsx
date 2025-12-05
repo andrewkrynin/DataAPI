@@ -8,10 +8,16 @@ import {
   BarChart3,
   ArrowUpRight,
   ExternalLink,
+  Loader2,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 import { demandApi } from "@/lib/api";
 import type { DemandEntry, DemandDetailResponse } from "@/types/api";
 import { clsx } from "clsx";
+import { useNFTMint } from "@/hooks/useNFTMint";
+import { useWallet } from "@/components/providers/Web3Provider";
+import { BSC_TESTNET } from "@/lib/contracts/DataOwnershipNFT";
 
 export default function DemandPage() {
   const [leaderboard, setLeaderboard] = useState<DemandEntry[]>([]);
@@ -24,6 +30,10 @@ export default function DemandPage() {
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const limit = 20;
+
+  // NFT minting
+  const { openModal, address, isConnected } = useWallet();
+  const { mint, isLoading: isMinting, error: mintError, txHash, success: mintSuccess, reset: resetMint } = useNFTMint();
 
   useEffect(() => {
     fetchLeaderboard();
@@ -71,10 +81,24 @@ export default function DemandPage() {
     return "bg-white/5 text-gray-400 border-white/10";
   }
 
-  const handleMint = () => {
+  const handleMint = async () => {
     if (!selectedUser) return;
 
-  }
+    // If not connected, open wallet modal
+    if (!isConnected) {
+      openModal();
+      return;
+    }
+
+    // Reset previous state
+    resetMint();
+
+    // Build target URL for the NFT
+    const platform = selectedUser.platform.toLowerCase();
+    const targetUrl = `https://${platform === "x" ? "x" : platform}.com/${selectedUser.username}`;
+
+    await mint(targetUrl);
+  };
 
 
   return (
@@ -317,11 +341,68 @@ export default function DemandPage() {
                         <ExternalLink className="h-4 w-4" />
                       </a>
 
+                      {/* Mint Button */}
                       <button
                         onClick={handleMint}
-                        className="flex items-center justify-center gap-2 w-full rounded-lg bg-gradient-to-r from-[#5800C3] to-[#8B5CF6] px-4 py-2.5 text-sm font-medium text-white hover:from-[#8B5CF6] hover:to-[#5800C3] transition-colors">
-                        Mint as NFT
+                        disabled={isMinting}
+                        className={clsx(
+                          "flex items-center justify-center gap-2 w-full rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-colors",
+                          mintSuccess
+                            ? "bg-green-600 hover:bg-green-700"
+                            : mintError
+                              ? "bg-red-600 hover:bg-red-700"
+                              : "bg-gradient-to-r from-[#5800C3] to-[#8B5CF6] hover:from-[#6b00e6] hover:to-[#9d6eff]",
+                          isMinting && "opacity-70 cursor-not-allowed"
+                        )}
+                      >
+                        {isMinting ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Minting...
+                          </>
+                        ) : mintSuccess ? (
+                          <>
+                            <CheckCircle className="h-4 w-4" />
+                            Minted!
+                          </>
+                        ) : mintError ? (
+                          <>
+                            <XCircle className="h-4 w-4" />
+                            Try Again
+                          </>
+                        ) : !isConnected ? (
+                          "Connect Wallet to Mint"
+                        ) : (
+                          "Mint as NFT"
+                        )}
                       </button>
+
+                      {/* Transaction Link */}
+                      {txHash && (
+                        <a
+                          href={`${BSC_TESTNET.blockExplorer}/tx/${txHash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-center gap-2 text-xs text-gray-400 hover:text-white transition-colors"
+                        >
+                          View transaction
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
+
+                      {/* Error Message */}
+                      {mintError && (
+                        <p className="text-xs text-red-400 text-center">
+                          {mintError}
+                        </p>
+                      )}
+
+                      {/* Connected Wallet */}
+                      {isConnected && address && (
+                        <p className="text-xs text-gray-500 text-center truncate">
+                          Wallet: {address.slice(0, 6)}...{address.slice(-4)}
+                        </p>
+                      )}
                     </div>
                   )}
                 </>
