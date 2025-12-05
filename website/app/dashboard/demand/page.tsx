@@ -21,26 +21,24 @@ export default function DemandPage() {
     null
   );
   const [isLoadingDetail, setIsLoadingDetail] = useState(false);
-  const [pagination, setPagination] = useState({
-    total: 0,
-    page: 1,
-    limit: 20,
-    totalPages: 0,
-  });
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const limit = 20;
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [pagination.page]);
+  }, [offset]);
 
   async function fetchLeaderboard() {
     setIsLoading(true);
     try {
       const response = await demandApi.getLeaderboard({
-        page: pagination.page,
-        limit: pagination.limit,
+        limit,
+        offset,
       });
-      setLeaderboard(response.leaderboard);
-      setPagination(response.pagination);
+      setLeaderboard(response.leaderboard || []);
+      // Check if there's more data
+      setHasMore((response.leaderboard?.length || 0) >= limit);
     } catch (err) {
       console.error("Error fetching leaderboard:", err);
     } finally {
@@ -180,26 +178,22 @@ export default function DemandPage() {
               )}
 
               {/* Pagination */}
-              {pagination.totalPages > 1 && (
+              {(offset > 0 || hasMore) && leaderboard.length > 0 && (
                 <div className="flex items-center justify-between border-t border-white/10 px-6 py-3">
                   <div className="text-sm text-gray-400">
-                    Page {pagination.page} of {pagination.totalPages}
+                    Showing {offset + 1} - {offset + leaderboard.length}
                   </div>
                   <div className="flex gap-2">
                     <button
-                      onClick={() =>
-                        setPagination((p) => ({ ...p, page: p.page - 1 }))
-                      }
-                      disabled={pagination.page <= 1}
+                      onClick={() => setOffset((o) => Math.max(0, o - limit))}
+                      disabled={offset <= 0}
                       className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Previous
                     </button>
                     <button
-                      onClick={() =>
-                        setPagination((p) => ({ ...p, page: p.page + 1 }))
-                      }
-                      disabled={pagination.page >= pagination.totalPages}
+                      onClick={() => setOffset((o) => o + limit)}
+                      disabled={!hasMore}
                       className="rounded-lg border border-white/10 px-3 py-1.5 text-sm text-white hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Next

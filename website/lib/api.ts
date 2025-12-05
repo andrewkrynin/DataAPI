@@ -119,12 +119,12 @@ export const creditsApi = {
 export const demandApi = {
   // GET /v1/demand - Get demand leaderboard
   getLeaderboard: (params?: {
-    page?: number;
     limit?: number;
+    offset?: number;
   }): Promise<DemandLeaderboardResponse> => {
     const searchParams = new URLSearchParams();
-    if (params?.page) searchParams.set("page", params.page.toString());
     if (params?.limit) searchParams.set("limit", params.limit.toString());
+    if (params?.offset) searchParams.set("offset", params.offset.toString());
 
     const query = searchParams.toString();
     return fetchWithAuth(`/v1/demand${query ? `?${query}` : ""}`, {
