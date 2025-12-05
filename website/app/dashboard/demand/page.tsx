@@ -60,8 +60,8 @@ export default function DemandPage() {
 
   const filteredLeaderboard = searchQuery
     ? leaderboard.filter((entry) =>
-        entry.username.toLowerCase().includes(searchQuery.toLowerCase())
-      )
+      entry.username.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     : leaderboard;
 
   function getRankBadge(rank: number) {
@@ -70,6 +70,12 @@ export default function DemandPage() {
     if (rank === 3) return "bg-amber-600/20 text-amber-400 border-amber-600/30";
     return "bg-white/5 text-gray-400 border-white/10";
   }
+
+  const handleMint = () => {
+    if (!selectedUser) return;
+
+  }
+
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
@@ -290,7 +296,7 @@ export default function DemandPage() {
                                               (h) => h.requests
                                             )
                                           )) *
-                                          100
+                                        100
                                       )}%`,
                                     }}
                                     title={`${point.date}: ${point.requests} requests`}
@@ -310,6 +316,12 @@ export default function DemandPage() {
                         View Profile
                         <ExternalLink className="h-4 w-4" />
                       </a>
+
+                      <button
+                        onClick={handleMint}
+                        className="flex items-center justify-center gap-2 w-full rounded-lg bg-gradient-to-r from-[#5800C3] to-[#8B5CF6] px-4 py-2.5 text-sm font-medium text-white hover:from-[#8B5CF6] hover:to-[#5800C3] transition-colors">
+                        Mint as NFT
+                      </button>
                     </div>
                   )}
                 </>
