@@ -82,6 +82,21 @@ function WalletConnectButtonInner({
 
   const isConnecting = status === "connecting";
 
+  // Clear WalletConnect/AppKit localStorage keys
+  const clearWalletStorage = useCallback(() => {
+    if (typeof window !== "undefined") {
+      const keysToRemove = Object.keys(localStorage).filter(
+        (key) =>
+          key.startsWith("wc@") ||
+          key.startsWith("W3M") ||
+          key.startsWith("@w3m") ||
+          key.includes("walletconnect") ||
+          key.includes("wagmi")
+      );
+      keysToRemove.forEach((key) => localStorage.removeItem(key));
+    }
+  }, []);
+
   // Authenticate with backend after wallet connection
   const authenticateWithBackend = useCallback(async (walletAddress: string) => {
     if (!walletProvider) {
@@ -152,12 +167,17 @@ function WalletConnectButtonInner({
         setError(err instanceof Error ? err.message : "Authentication failed");
       }
 
-      // Disconnect wallet on auth failure
-      disconnect();
+      // Disconnect wallet and clear WalletConnect storage on auth failure
+      try {
+        await disconnect();
+      } catch (disconnectErr) {
+        console.error("Disconnect error:", disconnectErr);
+      }
+      clearWalletStorage();
     } finally {
       setIsAuthenticating(false);
     }
-  }, [walletProvider, onSuccess, redirectOnConnect, router, disconnect, login]);
+  }, [walletProvider, onSuccess, redirectOnConnect, router, disconnect, login, clearWalletStorage]);
 
   // Trigger authentication when wallet connects
   useEffect(() => {
@@ -171,8 +191,13 @@ function WalletConnectButtonInner({
     open();
   };
 
-  const handleDisconnect = () => {
-    disconnect();
+  const handleDisconnect = async () => {
+    try {
+      await disconnect();
+    } catch (err) {
+      console.error("Disconnect error:", err);
+    }
+    clearWalletStorage();
     logout();
     setError(null);
   };
