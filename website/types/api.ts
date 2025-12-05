@@ -97,10 +97,13 @@ export interface DemandEntry {
   rank: number;
   username: string;
   platform: string;
-  demandScore: number;
-  requestCount: number;
+  totalRequests: number;
   uniqueRequesters: number;
+  daysWithRequests: number;
   lastRequested: string;
+  firstRequested: string;
+  estimatedMonthlyRevenue: string;
+  mintUrl: string;
 }
 
 export interface DemandLeaderboardResponse {
@@ -117,11 +120,14 @@ export interface DemandLeaderboardResponse {
 export interface DemandDetailResponse {
   username: string;
   platform: string;
-  demandScore: number;
-  requestCount: number;
+  totalRequests: number;
   uniqueRequesters: number;
+  daysWithRequests: number;
   lastRequested: string;
-  history: {
+  firstRequested: string;
+  estimatedMonthlyRevenue: string;
+  mintUrl: string;
+  history?: {
     date: string;
     requests: number;
   }[];

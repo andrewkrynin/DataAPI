@@ -155,7 +155,7 @@ export default function DemandPage() {
                             </span>
                             <span className="flex items-center gap-1">
                               <BarChart3 className="h-3 w-3" />
-                              {entry.requestCount} requests
+                              {entry.totalRequests} requests
                             </span>
                           </div>
                         </div>
@@ -164,10 +164,10 @@ export default function DemandPage() {
                       <div className="flex items-center gap-4">
                         <div className="text-right">
                           <div className="text-lg font-semibold text-white">
-                            {entry.demandScore.toLocaleString()}
+                            {entry.totalRequests.toLocaleString()}
                           </div>
                           <div className="text-xs text-gray-500">
-                            demand score
+                            total requests
                           </div>
                         </div>
                         <ArrowUpRight className="h-4 w-4 text-gray-500" />
@@ -230,18 +230,18 @@ export default function DemandPage() {
                       <div className="grid grid-cols-2 gap-4">
                         <div className="rounded-lg bg-white/5 p-4">
                           <div className="text-2xl font-bold text-white">
-                            {selectedUser.demandScore.toLocaleString()}
+                            {selectedUser.totalRequests?.toLocaleString() ?? 0}
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
-                            Demand Score
+                            Total Requests
                           </div>
                         </div>
                         <div className="rounded-lg bg-white/5 p-4">
                           <div className="text-2xl font-bold text-white">
-                            {selectedUser.requestCount}
+                            {selectedUser.daysWithRequests ?? 0}
                           </div>
                           <div className="text-xs text-gray-400 mt-1">
-                            Total Requests
+                            Days Active
                           </div>
                         </div>
                         <div className="rounded-lg bg-white/5 p-4">
