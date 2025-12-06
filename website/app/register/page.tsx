@@ -2,12 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { Navbar } from "@/components/Navbar";
+
 import { Footer } from "@/components/Footer";
 import { Mail, Loader2, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/authStore";
+import { DeveloperNavbar } from "@/components/DeveloperNavbar";
 
 type Step = "email" | "verification";
 
@@ -181,7 +182,7 @@ export default function RegisterPage() {
 
   return (
     <main className="min-h-screen bg-black text-zinc-100 selection:bg-[#5800C3]/30">
-      <Navbar />
+      <DeveloperNavbar />
 
       <div className="container mx-auto px-4 py-24 md:px-6 md:py-32">
         <div className="mx-auto max-w-md">

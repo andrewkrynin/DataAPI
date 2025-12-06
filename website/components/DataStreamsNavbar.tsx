@@ -13,8 +13,7 @@ export function DataStreamsNavbar() {
   };
 
   const linkClass = (href: string) =>
-    `text-sm font-medium transition-colors ${
-      isActive(href) ? "text-white" : "text-zinc-400 hover:text-white"
+    `text-sm font-medium transition-colors ${isActive(href) ? "text-white" : "text-zinc-400 hover:text-white"
     }`;
 
   return (
@@ -40,7 +39,7 @@ export function DataStreamsNavbar() {
             className="inline-flex h-9 items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-black"
             href="/register"
           >
-            Get API Keys
+            Connect Wallet
           </Link>
         </div>
       </div>

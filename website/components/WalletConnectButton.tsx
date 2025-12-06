@@ -78,6 +78,7 @@ function WalletConnectButtonInner({
   const { login, logout, isAuthenticated } = useAuthStore();
 
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [hasAttemptedAuth, setHasAttemptedAuth] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const isConnecting = status === "connecting";
@@ -179,15 +180,16 @@ function WalletConnectButtonInner({
     }
   }, [walletProvider, onSuccess, redirectOnConnect, router, disconnect, login, clearWalletStorage]);
 
-  // Trigger authentication when wallet connects
+  // Trigger authentication when wallet connects (only if user initiated connection)
   useEffect(() => {
-    if (isConnected && address && walletProvider && !isAuthenticated && !isAuthenticating) {
+    if (isConnected && address && walletProvider && !isAuthenticated && !isAuthenticating && hasAttemptedAuth) {
       authenticateWithBackend(address);
     }
-  }, [isConnected, address, walletProvider, isAuthenticated, isAuthenticating, authenticateWithBackend]);
+  }, [isConnected, address, walletProvider, isAuthenticated, isAuthenticating, hasAttemptedAuth, authenticateWithBackend]);
 
   const handleClick = () => {
     setError(null);
+    setHasAttemptedAuth(true);
     open();
   };
 
@@ -200,6 +202,7 @@ function WalletConnectButtonInner({
     clearWalletStorage();
     logout();
     setError(null);
+    setHasAttemptedAuth(false);
   };
 
   // Show error state
@@ -222,8 +225,8 @@ function WalletConnectButtonInner({
     );
   }
 
-  // Show authenticating state
-  if (isConnected && (isAuthenticating || !isAuthenticated)) {
+  // Show authenticating state (only if user initiated connection)
+  if (isConnected && hasAttemptedAuth && (isAuthenticating || !isAuthenticated)) {
     return (
       <button
         type="button"
