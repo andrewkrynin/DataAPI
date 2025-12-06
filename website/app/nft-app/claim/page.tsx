@@ -247,7 +247,7 @@ export default function ClaimPage() {
         >
             <form onSubmit={handleClaim} className="flex flex-col gap-4">
               <label htmlFor="source-url" className="sr-only">Data Source URL</label>
-              <div className="relative">
+              <div className={`relative ${urlError ? "mb-6" : ""}`}>
                 <input
                   id="source-url"
                   type="url"
