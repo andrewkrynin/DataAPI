@@ -30,4 +30,8 @@ body {
   .border-gradient-primary {
     @apply border-transparent bg-gradient-to-r from-[#5800C3] to-[#C2C4F9] bg-clip-border;
   }
+
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
 }

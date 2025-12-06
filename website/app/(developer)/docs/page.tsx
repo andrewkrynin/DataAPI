@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { ArrowRight, Book, Code2, FileText, MessageSquare, Terminal } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 
 export default function DocsPage() {
   const quickAccess = [
@@ -51,7 +49,6 @@ export default function DocsPage() {
 
   return (
     <main className="min-h-screen bg-black text-zinc-100 selection:bg-[#5800C3]/30">
-      <Navbar />
       
       <div className="container mx-auto px-4 py-24 md:px-6 md:py-32">
         <div className="mx-auto max-w-4xl">
@@ -128,7 +125,6 @@ export default function DocsPage() {
         </div>
       </div>
 
-      <Footer />
     </main>
   );
 }

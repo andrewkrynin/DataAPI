@@ -9,7 +9,7 @@ export function Footer() {
           <div>
             <Link className="flex items-center gap-2 font-bold text-white" href="#">
               <Database className="h-6 w-6 text-[#5800C3]" />
-              <span>DataAPI</span>
+              <span>GetContext</span>
             </Link>
             <p className="mt-4 text-sm text-zinc-400">
               The unified API for social media data. Normalized, vectorized, and ready for AI.
@@ -42,7 +42,7 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-white/10 pt-8 text-center text-sm text-zinc-500">
-          © {new Date().getFullYear()} DataAPI. All rights reserved.
+          © {new Date().getFullYear()} GetContext. All rights reserved.
         </div>
       </div>
     </footer>

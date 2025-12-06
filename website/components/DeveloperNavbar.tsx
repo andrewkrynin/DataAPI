@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Database } from "lucide-react";
 
-export function Navbar() {
+export function DeveloperNavbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl">
       <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
@@ -10,11 +10,8 @@ export function Navbar() {
           <span>GetContext</span>
         </Link>
         <nav className="hidden gap-6 md:flex">
-          <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/claim">
-            Data Streams
-          </Link>
-          <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/#features">
-            Features
+          <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/">
+            Context API
           </Link>
           <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/#pricing">
             Pricing
@@ -22,14 +19,15 @@ export function Navbar() {
           <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/docs">
             Documentation
           </Link>
+          <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors" href="/datastreams">
+            DataStreams
+          </Link>
         </nav>
         <div className="flex items-center gap-4">
-          <Link className="text-sm font-medium text-zinc-400 hover:text-white transition-colors hidden sm:block" href="/claim">
-            Start Claiming
-          </Link>
           <Link
             className="inline-flex h-9 items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium text-black transition-colors hover:bg-zinc-200 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2 focus:ring-offset-black"
-            href="/register"
+            href="/app"
+            title="Sign up to access Developer Dashboard"
           >
             Get API Keys
           </Link>
@@ -38,4 +36,5 @@ export function Navbar() {
     </nav>
   );
 }
+
 
