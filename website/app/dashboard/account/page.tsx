@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { User, Mail, Wallet, Calendar, Edit2, Save, X } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
-import { clsx } from "clsx";
 
 export default function AccountPage() {
   const { developer } = useAuthStore();
@@ -102,17 +101,19 @@ export default function AccountPage() {
             <div className="space-y-4">
               {/* Full Name */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
+                <label htmlFor="fullName" className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
                   <User className="h-4 w-4" />
                   Full Name
                 </label>
                 {isEditing ? (
                   <input
+                    id="fullName"
                     type="text"
                     value={formData.fullName}
                     onChange={(e) =>
                       setFormData({ ...formData, fullName: e.target.value })
                     }
+                    placeholder="Enter your full name"
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#5800C3]/50 focus:outline-none focus:ring-1 focus:ring-[#5800C3]/50"
                   />
                 ) : (
@@ -124,17 +125,19 @@ export default function AccountPage() {
 
               {/* Email */}
               <div>
-                <label className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
+                <label htmlFor="email" className="flex items-center gap-2 text-sm font-medium text-gray-400 mb-2">
                   <Mail className="h-4 w-4" />
                   Email
                 </label>
                 {isEditing ? (
                   <input
+                    id="email"
                     type="email"
                     value={formData.email}
                     onChange={(e) =>
                       setFormData({ ...formData, email: e.target.value })
                     }
+                    placeholder="Enter your email address"
                     className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-white focus:border-[#5800C3]/50 focus:outline-none focus:ring-1 focus:ring-[#5800C3]/50"
                   />
                 ) : (
@@ -178,10 +181,10 @@ export default function AccountPage() {
                 <div className="rounded-lg bg-white/5 px-4 py-2.5 text-gray-400">
                   {developer?.id
                     ? new Date().toLocaleDateString("en-US", {
-                        month: "long",
-                        day: "numeric",
-                        year: "numeric",
-                      })
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                    })
                     : "-"}
                 </div>
               </div>

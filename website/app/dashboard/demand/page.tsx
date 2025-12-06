@@ -316,7 +316,7 @@ export default function DemandPage() {
                                         100,
                                         (point.requests /
                                           Math.max(
-                                            ...selectedUser.history.map(
+                                            ...selectedUser.history!.map(
                                               (h) => h.requests
                                             )
                                           )) *

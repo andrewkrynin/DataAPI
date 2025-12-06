@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { BrowserProvider, Contract, keccak256, toUtf8Bytes } from "ethers";
+import { BrowserProvider, Contract, keccak256, toUtf8Bytes, Eip1193Provider } from "ethers";
 import {
   DATA_OWNERSHIP_NFT_ADDRESS,
   DATA_OWNERSHIP_NFT_ABI,
@@ -31,7 +31,7 @@ export function useNFTMint() {
     if (!window.ethereum) return false;
 
     try {
-      const provider = new BrowserProvider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
       const contract = new Contract(
         DATA_OWNERSHIP_NFT_ADDRESS,
         DATA_OWNERSHIP_NFT_ABI,
@@ -67,7 +67,7 @@ export function useNFTMint() {
       }
 
       // Get provider and signer
-      const provider = new BrowserProvider(window.ethereum);
+      const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
       const signer = await provider.getSigner();
       const address = await signer.getAddress();
 

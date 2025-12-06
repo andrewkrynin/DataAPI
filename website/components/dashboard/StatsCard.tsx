@@ -41,7 +41,10 @@ export function StatsCard({
           <span className={iconColors[variant]}>{icon}</span>
           <span className="text-sm font-medium">{title}</span>
         </div>
-        <button className="text-gray-500 hover:text-gray-400 transition-colors">
+        <button
+          className="text-gray-500 hover:text-gray-400 transition-colors"
+          aria-label="Help information"
+        >
           <HelpCircle className="h-4 w-4" />
         </button>
       </div>

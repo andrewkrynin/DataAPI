@@ -186,22 +186,25 @@ export default function ApiKeysPage() {
                       )}
                     </div>
 
-                    <button
-                      onClick={() => copyToClipboard(apiKey.key, apiKey.id)}
-                      className={clsx(
-                        "rounded-lg p-2 transition-colors",
-                        copiedKey === apiKey.id
-                          ? "bg-green-500/10 text-green-400"
-                          : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
-                      )}
-                      title="Copy to clipboard"
-                    >
-                      {copiedKey === apiKey.id ? (
-                        <CheckCircle className="h-4 w-4" />
-                      ) : (
-                        <Copy className="h-4 w-4" />
-                      )}
-                    </button>
+                    {apiKey.key && (
+                      <button
+                        type="button"
+                        onClick={() => copyToClipboard(apiKey.key!, apiKey.id)}
+                        className={clsx(
+                          "rounded-lg p-2 transition-colors",
+                          copiedKey === apiKey.id
+                            ? "bg-green-500/10 text-green-400"
+                            : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
+                        )}
+                        title="Copy to clipboard"
+                      >
+                        {copiedKey === apiKey.id ? (
+                          <CheckCircle className="h-4 w-4" />
+                        ) : (
+                          <Copy className="h-4 w-4" />
+                        )}
+                      </button>
+                    )}
 
                     {apiKey.isActive && (
                       <button

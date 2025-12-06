@@ -216,6 +216,7 @@ export function ActivityTable({
             <select
               value={pagination.limit}
               onChange={(e) => onLimitChange?.(Number(e.target.value))}
+              aria-label="Rows per page"
               className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-sm text-white focus:border-[#5800C3]/50 focus:outline-none"
             >
               <option value={10}>10</option>
@@ -229,15 +230,16 @@ export function ActivityTable({
             <button
               onClick={() => onPageChange?.(pagination.page - 1)}
               disabled={pagination.page <= 1}
+              aria-label="Previous page"
               className="rounded-md p-1.5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="px-2 text-sm text-gray-400">Previous</span>
-            <span className="px-2 text-sm text-white">Next</span>
             <button
               onClick={() => onPageChange?.(pagination.page + 1)}
               disabled={pagination.page >= pagination.totalPages}
+              aria-label="Next page"
               className="rounded-md p-1.5 text-gray-400 hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <ChevronRight className="h-4 w-4" />

@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { 
+import {
   Wallet, Shield, Zap, Box, X,
-  Search, Clock, 
+  Search, Clock,
   TrendingUp, ArrowUpRight, Database,
   Twitter, Youtube, Linkedin, Instagram
 } from "lucide-react";
@@ -59,7 +59,7 @@ export default function ClaimPage() {
     const interval = setInterval(() => {
       const platforms = ["twitter", "youtube", "linkedin", "instagram", "tiktok"] as const;
       const basePoints = Math.floor(Math.random() * 2000) + 100;
-      
+
       const newRequest: RequestItem = {
         id: Math.random().toString(36).substr(2, 9),
         platform: platforms[Math.floor(Math.random() * platforms.length)],
@@ -98,7 +98,7 @@ export default function ClaimPage() {
   return (
     <main className="min-h-screen bg-black text-zinc-100 selection:bg-[#5800C3]/30">
       <Navbar />
-      
+
       <div className="container mx-auto px-4 py-24 md:px-6 md:py-32">
         <div className="mx-auto max-w-3xl text-center">
           <motion.div
@@ -148,10 +148,10 @@ export default function ClaimPage() {
 
           {/* Explainer Block */}
           <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.5, delay: 0.2 }}
-             className="grid gap-8 md:grid-cols-3 text-left mb-32"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="grid gap-8 md:grid-cols-3 text-left mb-32"
           >
             <div className="p-6 rounded-xl border border-white/10 bg-white/5">
               <div className="h-10 w-10 rounded-lg bg-[#5800C3]/20 flex items-center justify-center mb-4">
@@ -187,7 +187,7 @@ export default function ClaimPage() {
         <div className="border-t border-white/10 pt-24">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
             <div>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
@@ -230,21 +230,19 @@ export default function ClaimPage() {
               <div className="flex gap-2 w-full md:w-auto overflow-x-auto pb-2 md:pb-0">
                 <button
                   onClick={() => setFilter("latest")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    filter === "latest" 
-                      ? "bg-[#5800C3] text-white shadow-lg shadow-[#5800C3]/25" 
-                      : "bg-white/5 text-zinc-400 hover:bg-white/10"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "latest"
+                    ? "bg-[#5800C3] text-white shadow-lg shadow-[#5800C3]/25"
+                    : "bg-white/5 text-zinc-400 hover:bg-white/10"
+                    }`}
                 >
                   <Clock className="h-4 w-4" /> Latest
                 </button>
                 <button
                   onClick={() => setFilter("largest")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    filter === "largest" 
-                      ? "bg-[#5800C3] text-white shadow-lg shadow-[#5800C3]/25" 
-                      : "bg-white/5 text-zinc-400 hover:bg-white/10"
-                  }`}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${filter === "largest"
+                    ? "bg-[#5800C3] text-white shadow-lg shadow-[#5800C3]/25"
+                    : "bg-white/5 text-zinc-400 hover:bg-white/10"
+                    }`}
                 >
                   <TrendingUp className="h-4 w-4" /> Highest Value
                 </button>
@@ -311,7 +309,7 @@ export default function ClaimPage() {
                 </motion.div>
               ))}
             </AnimatePresence>
-            
+
             {filteredRequests.length === 0 && (
               <div className="text-center py-24 text-zinc-500">
                 No active requests found matching your search.
@@ -341,10 +339,11 @@ export default function ClaimPage() {
               <button
                 onClick={() => setIsWalletOpen(false)}
                 className="absolute right-4 top-4 text-zinc-500 hover:text-white"
+                aria-label="Close wallet connection modal"
               >
                 <X className="h-5 w-5" />
               </button>
-              
+
               <div className="mb-6 text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#5800C3]/20">
                   <Wallet className="h-6 w-6 text-[#C2C4F9]" />
@@ -366,7 +365,7 @@ export default function ClaimPage() {
                   </button>
                 ))}
               </div>
-              
+
               <p className="mt-6 text-center text-xs text-zinc-500">
                 By connecting, you agree to our Terms of Service and Privacy Policy.
               </p>

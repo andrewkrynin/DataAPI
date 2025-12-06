@@ -97,9 +97,10 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     if (!isReady || typeof window === "undefined") return;
 
     const checkConnection = async () => {
-      if (window.ethereum) {
+      const ethereum = window.ethereum as { request: (args: { method: string }) => Promise<string[]> } | undefined;
+      if (ethereum) {
         try {
-          const accounts = await window.ethereum.request?.({ method: "eth_accounts" }) as string[] | undefined;
+          const accounts = await ethereum.request({ method: "eth_accounts" });
           if (accounts && accounts.length > 0) {
             setAddress(accounts[0]);
             setIsConnected(true);
@@ -127,8 +128,9 @@ export function Web3Provider({ children }: Web3ProviderProps) {
       }
     };
 
-    if (window.ethereum?.on) {
-      window.ethereum.on("accountsChanged", handleAccountsChanged);
+    const eth = window.ethereum as { on?: (event: string, cb: (accounts: string[]) => void) => void; removeListener?: (event: string, cb: (accounts: string[]) => void) => void } | undefined;
+    if (eth?.on) {
+      eth.on("accountsChanged", handleAccountsChanged);
     }
 
     // Poll for changes (backup)
@@ -136,8 +138,8 @@ export function Web3Provider({ children }: Web3ProviderProps) {
 
     return () => {
       clearInterval(interval);
-      if (window.ethereum?.removeListener) {
-        window.ethereum.removeListener("accountsChanged", handleAccountsChanged);
+      if (eth?.removeListener) {
+        eth.removeListener("accountsChanged", handleAccountsChanged);
       }
     };
   }, [isReady]);

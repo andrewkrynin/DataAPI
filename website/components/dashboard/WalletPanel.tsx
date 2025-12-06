@@ -124,7 +124,7 @@ export function WalletPanel({ isCollapsed }: WalletPanelProps) {
         <div className="flex items-center gap-2 min-w-0">
           <div className="h-2 w-2 rounded-full bg-green-400 shrink-0" />
           <span className="text-sm text-white truncate">
-            {truncateAddress(address)}
+            {truncateAddress(address!)}
           </span>
         </div>
         {isExpanded ? (
