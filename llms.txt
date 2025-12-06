@@ -1,0 +1,77 @@
+# Context API MCP Server (Doppelgangers.ai)
+
+> Access contextualized social media data via Model Context Protocol. Returns rich XML descriptions of posts, relationships, and conversation threads for high-quality retrieval and analysis.
+
+## Installation & Setup
+
+### 1. Get API Key
+You need a `CONTEXT_API_KEY` to use this server.
+- **Web:** Request at `dev.doppelgangers.ai:3003`
+- **CLI:**
+  ```bash
+  curl -X POST [https://dev.doppelgangers.ai:3003/auth/request-key](https://dev.doppelgangers.ai:3003/auth/request-key) \
+    -H "Content-Type: application/json" \
+    -d '{"email": "your@email.com", "name": "Your Name"}'
+2. MCP Configuration
+Add the following to your MCP Client configuration file (e.g., claude_desktop_config.json, settings.json):
+
+JSON
+
+{
+  "mcpServers": {
+    "context-api": {
+      "command": "npx",
+      "args": ["-y", "context-api-mcp"],
+      "env": {
+        "CONTEXT_API_KEY": "your-api-key-here"
+      }
+    }
+  }
+}
+Tools
+search_relevant_posts
+Semantic search of contextualized post renderings for a specific user.
+
+Use case: Finding specific opinions, stance on topics, or querying distinct events.
+
+Parameters:
+
+query (string, required): Natural language search query (e.g., "views on AI regulation").
+
+username (string, required): Twitter/X handle without the @.
+
+platform (string, optional): Default is "X".
+
+get_all_user_posts
+Retrieve all contextualized post renderings for a specific user.
+
+Use case: Broad analysis of insights, mood, trends, and topics over a user's timeline.
+
+Parameters:
+
+username (string, required): Twitter/X handle without the @.
+
+platform (string, optional): Default is "X".
+
+simple (boolean, optional): If true, returns simplified renderings without deep metadata.
+
+limit (number, optional): Max results.
+
+offset (number, optional): For pagination.
+
+check_credits
+View current API credit balance.
+
+Parameters: None.
+
+Usage Guidelines & Context
+Data Format: The API returns data in XML format. This structure describes relationships between posts, referenced images, and conversation summaries.
+
+Cost: Usage consumes credits. Always handle credit exhaustion gracefully.
+
+Video/Links: Currently, descriptions for external links or referenced videos are not included in the XML context.
+
+Troubleshooting
+EOF Error: If your client fails to start the server, try providing the absolute path to npx (e.g., /usr/local/bin/npx).
+
+Missing Data: Ensure the username provided does not include the @ symbol.
