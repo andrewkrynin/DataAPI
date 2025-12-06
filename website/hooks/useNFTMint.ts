@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { BrowserProvider, Contract, keccak256, toUtf8Bytes, Eip1193Provider } from "ethers";
+import { Contract, keccak256, toUtf8Bytes, JsonRpcProvider } from "ethers";
 import {
   DATA_OWNERSHIP_NFT_ADDRESS,
   DATA_OWNERSHIP_NFT_ABI,
+  BSC_TESTNET,
 } from "@/lib/contracts/DataOwnershipNFT";
+import { useWallet } from "@/components/providers/Web3Provider";
 
 interface MintState {
   isLoading: boolean;
@@ -20,6 +22,7 @@ interface MintResult {
 }
 
 export function useNFTMint() {
+  const { getProvider, isConnected, address: walletAddress } = useWallet();
   const [state, setState] = useState<MintState>({
     isLoading: false,
     error: null,
@@ -28,10 +31,9 @@ export function useNFTMint() {
   });
 
   const checkUrlRegistered = useCallback(async (targetUrl: string): Promise<boolean> => {
-    if (!window.ethereum) return false;
-
     try {
-      const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
+      // Use public RPC for read-only check
+      const provider = new JsonRpcProvider(BSC_TESTNET.rpcUrl);
       const contract = new Contract(
         DATA_OWNERSHIP_NFT_ADDRESS,
         DATA_OWNERSHIP_NFT_ABI,
@@ -50,8 +52,8 @@ export function useNFTMint() {
     setState({ isLoading: true, error: null, txHash: null, success: false });
 
     try {
-      // Check if wallet is available
-      if (!window.ethereum) {
+      // Check if wallet is connected
+      if (!isConnected) {
         throw new Error("Please connect your wallet first");
       }
 
@@ -66,10 +68,25 @@ export function useNFTMint() {
         throw new Error("This profile has already been minted");
       }
 
-      // Get provider and signer
-      const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
-      const signer = await provider.getSigner();
-      const address = await signer.getAddress();
+      // Get provider from AppKit
+      const provider = await getProvider();
+      if (!provider) {
+        throw new Error("Could not get wallet provider");
+      }
+
+      // Check network - must be BSC Testnet
+      const network = await provider.getNetwork();
+      if (network.chainId !== BigInt(BSC_TESTNET.chainId)) {
+        throw new Error(`Wrong network. Please switch to BSC Testnet (Chain ID: ${BSC_TESTNET.chainId}) in your wallet and reconnect.`);
+      }
+
+      // Use wallet address from context
+      if (!walletAddress) {
+        throw new Error("Wallet address not available");
+      }
+
+      const signer = await provider.getSigner(walletAddress);
+      const address = walletAddress;
 
       // Create contract instance
       const contract = new Contract(
@@ -123,7 +140,7 @@ export function useNFTMint() {
       });
       return null;
     }
-  }, [checkUrlRegistered]);
+  }, [checkUrlRegistered, isConnected, getProvider, walletAddress]);
 
   const reset = useCallback(() => {
     setState({

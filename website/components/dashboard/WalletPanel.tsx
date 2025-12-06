@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Wallet, ChevronUp, ChevronDown, ExternalLink, Copy, Check } from "lucide-react";
-import { BrowserProvider, formatEther, Contract, Eip1193Provider } from "ethers";
+import { formatEther, Contract } from "ethers";
 import { clsx } from "clsx";
 import {
   DATA_OWNERSHIP_NFT_ADDRESS,
@@ -16,24 +16,24 @@ interface WalletPanelProps {
 }
 
 export function WalletPanel({ isCollapsed }: WalletPanelProps) {
-  const { isReady, openModal, address, isConnected } = useWallet();
+  const { isReady, openModal, address, isConnected, getProvider } = useWallet();
   const [isExpanded, setIsExpanded] = useState(false);
   const [balance, setBalance] = useState<string | null>(null);
   const [nftCount, setNftCount] = useState<number>(0);
   const [copied, setCopied] = useState(false);
 
-  // Reset state when disconnected
-  const shouldFetch = isConnected && address && window.ethereum;
-
   // Fetch balance and NFT count
   useEffect(() => {
-    if (!shouldFetch) {
+    if (!isConnected || !address) {
+      setBalance(null);
+      setNftCount(0);
       return;
     }
 
     const fetchData = async () => {
       try {
-        const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
+        const provider = await getProvider();
+        if (!provider) return;
 
         // Get BNB balance
         const bal = await provider.getBalance(address);
@@ -57,7 +57,7 @@ export function WalletPanel({ isCollapsed }: WalletPanelProps) {
     };
 
     fetchData();
-  }, [shouldFetch, address]);
+  }, [isConnected, address, getProvider]);
 
   const copyAddress = async () => {
     if (!address) return;
