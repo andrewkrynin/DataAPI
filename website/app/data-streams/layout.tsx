@@ -1,4 +1,4 @@
-import { DeveloperNavbar } from "@/components/DeveloperNavbar";
+import { DataStreamsNavbar } from "@/components/DataStreamsNavbar";
 import { Footer } from "@/components/Footer";
 
 export default function DataStreamsLayout({
@@ -8,10 +8,9 @@ export default function DataStreamsLayout({
 }) {
   return (
     <>
-      <DeveloperNavbar />
+      <DataStreamsNavbar />
       {children}
       <Footer />
     </>
   );
 }
-

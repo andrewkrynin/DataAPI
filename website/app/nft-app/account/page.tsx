@@ -6,8 +6,14 @@ import {
   Save, Camera, Moon, Sun, Settings, Link as LinkIcon
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useWallet } from "@/components/providers/Web3Provider";
+
+// Truncate wallet address for display
+const truncateAddress = (addr: string) =>
+  `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
 export default function NFTAccountPage() {
+  const { isConnected, address, openModal, isReady } = useWallet();
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [saleNotifications, setSaleNotifications] = useState(true);
   const [claimAlerts, setClaimAlerts] = useState(true);
@@ -38,15 +44,17 @@ export default function NFTAccountPage() {
             <div className="flex items-center gap-6">
               <div className="relative">
                 <div className="h-20 w-20 rounded-full bg-gradient-primary flex items-center justify-center text-2xl font-bold">
-                  D
+                  {address?.[2]?.toUpperCase() || "?"}
                 </div>
-                <button className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#5800C3] flex items-center justify-center border-2 border-black hover:bg-[#6800E3] transition-colors">
+                <button type="button" className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-[#5800C3] flex items-center justify-center border-2 border-black hover:bg-[#6800E3] transition-colors">
                   <Camera className="h-4 w-4 text-white" />
                 </button>
               </div>
               <div>
-                <h3 className="text-white font-semibold">DataCollector</h3>
-                <p className="text-sm text-zinc-400">Member since Jan 2024</p>
+                <h3 className="text-white font-semibold">
+                  {address ? truncateAddress(address) : "Not Connected"}
+                </h3>
+                <p className="text-sm text-zinc-400">Data Stream Owner</p>
               </div>
             </div>
 
@@ -55,15 +63,36 @@ export default function NFTAccountPage() {
               <label className="block text-sm font-medium text-zinc-300 mb-2">
                 Connected Wallet
               </label>
-              <div className="flex items-center gap-3 p-4 bg-black/50 border border-white/10 rounded-lg">
-                <Wallet className="h-5 w-5 text-green-400" />
-                <span className="flex-1 text-white font-mono text-sm">
-                  0x742d35Cc6634C0532925a3b844Bc9e7595f9c8a
-                </span>
-                <button className="px-3 py-1.5 rounded-lg bg-white/5 text-white text-sm hover:bg-white/10 transition-colors">
-                  Disconnect
-                </button>
-              </div>
+              {isConnected && address ? (
+                <div className="flex items-center gap-3 p-4 bg-black/50 border border-white/10 rounded-lg">
+                  <Wallet className="h-5 w-5 text-green-400" />
+                  <span className="flex-1 text-white font-mono text-sm">
+                    {address}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={openModal}
+                    className="px-3 py-1.5 rounded-lg bg-white/5 text-white text-sm hover:bg-white/10 transition-colors"
+                  >
+                    Manage
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3 p-4 bg-black/50 border border-white/10 rounded-lg">
+                  <Wallet className="h-5 w-5 text-zinc-500" />
+                  <span className="flex-1 text-zinc-400 text-sm">
+                    No wallet connected
+                  </span>
+                  <button
+                    type="button"
+                    onClick={openModal}
+                    disabled={!isReady}
+                    className="px-3 py-1.5 rounded-lg bg-gradient-primary text-white text-sm hover:opacity-90 transition-opacity disabled:opacity-50"
+                  >
+                    {isReady ? "Connect" : "Loading..."}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Display Name */}

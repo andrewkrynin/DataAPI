@@ -3,7 +3,7 @@
 
 export const DATA_OWNERSHIP_NFT_ADDRESS = process.env.NEXT_PUBLIC_NFT_CONTRACT_ADDRESS || "";
 
-// Minimal ABI for minting
+// ABI for DataOwnershipNFT contract (ERC721URIStorage)
 export const DATA_OWNERSHIP_NFT_ABI = [
   {
     inputs: [
@@ -56,10 +56,14 @@ export const DATA_OWNERSHIP_NFT_ABI = [
 ] as const;
 
 // BSC Testnet configuration
+// Using public RPC that supports CORS
 export const BSC_TESTNET = {
   chainId: 97,
   name: "BSC Testnet",
-  rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545",
+  rpcUrl: "https://bsc-testnet-rpc.publicnode.com",
+  // Alternative RPC URLs that support CORS:
+  // "https://bsc-testnet.public.blastapi.io"
+  // "https://endpoints.omniatech.io/v1/bsc/testnet/public"
   blockExplorer: "https://testnet.bscscan.com",
   nativeCurrency: {
     name: "BNB",
