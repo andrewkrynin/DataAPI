@@ -2,7 +2,7 @@
 MCP (Model Context Protocol) server to access the doppelgangers.ai Social Media Context API.
 
 This MCP server provides access to contextualized renderings (XML descriptions) of
-Twitter/X posts. The contextualization allows for:
+Social media posts and channels. The contextualization allows for:
 * More high-quality retrieval of relevant information from the posts,
 * More high-quality analysis of insights, trends, topics, etc. from the posts
 
