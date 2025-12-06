@@ -12,7 +12,9 @@ interface AppKitContextType {
   openModal: () => Promise<void>;
   address: string | null;
   isConnected: boolean;
+  chainId: number | null;
   getProvider: () => Promise<import("ethers").BrowserProvider | null>;
+  switchToBscTestnet: () => Promise<boolean>;
 }
 
 const AppKitContext = createContext<AppKitContextType>({
@@ -20,7 +22,9 @@ const AppKitContext = createContext<AppKitContextType>({
   openModal: async () => {},
   address: null,
   isConnected: false,
+  chainId: null,
   getProvider: async () => null,
+  switchToBscTestnet: async () => false,
 });
 
 export function useWallet() {
@@ -94,10 +98,14 @@ interface Web3ProviderProps {
   children: ReactNode;
 }
 
+// BSC Testnet chain ID
+const BSC_TESTNET_CHAIN_ID = 97;
+
 export function Web3Provider({ children }: Web3ProviderProps) {
   const [isReady, setIsReady] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
   const [isConnected, setIsConnected] = useState(false);
+  const [chainId, setChainId] = useState<number | null>(null);
   const listenerRef = useRef<((addr: string | undefined, connected: boolean) => void) | null>(null);
 
   useEffect(() => {
@@ -130,9 +138,45 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     };
   }, [isReady]);
 
+  // Track chainId from provider
+  useEffect(() => {
+    if (!isConnected || !appKitInstance) {
+      setChainId(null);
+      return;
+    }
+
+    const checkChainId = async () => {
+      try {
+        const walletProvider = appKitInstance?.getWalletProvider();
+        if (walletProvider) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const chainIdHex = await (walletProvider as any).request({ method: "eth_chainId" });
+          setChainId(parseInt(chainIdHex, 16));
+        }
+      } catch {
+        setChainId(null);
+      }
+    };
+
+    checkChainId();
+  }, [isConnected, address]);
+
   const openModal = useCallback(async () => {
     if (appKitInstance) {
       await appKitInstance.open();
+    }
+  }, []);
+
+  const switchToBscTestnet = useCallback(async (): Promise<boolean> => {
+    if (!appKitInstance) return false;
+    try {
+      const { bscTestnet } = await import("@reown/appkit/networks");
+      await appKitInstance.switchNetwork(bscTestnet);
+      setChainId(BSC_TESTNET_CHAIN_ID);
+      return true;
+    } catch (err) {
+      console.error("Failed to switch network:", err);
+      return false;
     }
   }, []);
 
@@ -151,7 +195,7 @@ export function Web3Provider({ children }: Web3ProviderProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppKitContext.Provider value={{ isReady, openModal, address, isConnected, getProvider }}>
+      <AppKitContext.Provider value={{ isReady, openModal, address, isConnected, chainId, getProvider, switchToBscTestnet }}>
         {children}
       </AppKitContext.Provider>
     </QueryClientProvider>

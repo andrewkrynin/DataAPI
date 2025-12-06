@@ -22,7 +22,7 @@ interface MintResult {
 }
 
 export function useNFTMint() {
-  const { getProvider, isConnected, address: walletAddress } = useWallet();
+  const { getProvider, isConnected, address: walletAddress, switchToBscTestnet } = useWallet();
   const [state, setState] = useState<MintState>({
     isLoading: false,
     error: null,
@@ -77,7 +77,21 @@ export function useNFTMint() {
       // Check network - must be BSC Testnet
       const network = await provider.getNetwork();
       if (network.chainId !== BigInt(BSC_TESTNET.chainId)) {
-        throw new Error(`Wrong network. Please switch to BSC Testnet (Chain ID: ${BSC_TESTNET.chainId}) in your wallet and reconnect.`);
+        // Try to switch network automatically
+        const switched = await switchToBscTestnet();
+        if (!switched) {
+          throw new Error(`Wrong network. Please switch to BSC Testnet (Chain ID: ${BSC_TESTNET.chainId}) in your wallet and try again.`);
+        }
+        // Re-get provider after network switch
+        const newProvider = await getProvider();
+        if (!newProvider) {
+          throw new Error("Could not get provider after network switch");
+        }
+        // Verify network switched
+        const newNetwork = await newProvider.getNetwork();
+        if (newNetwork.chainId !== BigInt(BSC_TESTNET.chainId)) {
+          throw new Error(`Network switch failed. Please manually switch to BSC Testnet.`);
+        }
       }
 
       // Use wallet address from context
@@ -85,8 +99,9 @@ export function useNFTMint() {
         throw new Error("Wallet address not available");
       }
 
-      const signer = await provider.getSigner(walletAddress);
-      const address = walletAddress;
+      // Get signer - don't pass address, let provider use connected account
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
 
       // Create contract instance
       const contract = new Contract(
@@ -140,7 +155,7 @@ export function useNFTMint() {
       });
       return null;
     }
-  }, [checkUrlRegistered, isConnected, getProvider, walletAddress]);
+  }, [checkUrlRegistered, isConnected, getProvider, walletAddress, switchToBscTestnet]);
 
   const reset = useCallback(() => {
     setState({
