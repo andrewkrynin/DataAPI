@@ -70,8 +70,8 @@ export default function DocsPage() {
       content: (
         <div className="space-y-4 text-gray-300">
           <p>
-            Welcome to the GetContext documentation. This guide will help you
-            get started with our API.
+            Welcome to the Context API documentation. This API provides semantic
+            search capabilities for Twitter/X data with credit-based billing.
           </p>
           <h3 className="text-lg font-semibold text-white mt-6">
             1. Get your API Key
@@ -89,10 +89,20 @@ export default function DocsPage() {
           <h3 className="text-lg font-semibold text-white mt-6">
             2. Make your first request
           </h3>
+          <p>
+            Use the search endpoint to find relevant posts from a Twitter/X
+            user:
+          </p>
           <CodeBlock
             id="first-request"
-            code={`curl -X GET "https://api.getcontext.now/v1/transcript?video_id=dQw4w9WgXcQ" \\
-  -H "Authorization: Bearer YOUR_API_KEY"`}
+            code={`curl -X POST "https://dev.doppelgagners.ai:3003/v1/search" \\
+  -H "X-API-Key: YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "What does he think about AI?",
+    "username": "elonmusk",
+    "platform": "X"
+  }'`}
             copiedCode={copiedCode}
             onCopy={copyToClipboard}
           />
@@ -105,17 +115,17 @@ export default function DocsPage() {
       content: (
         <div className="space-y-4 text-gray-300">
           <p>
-            All API requests require authentication using a Bearer token in the
-            Authorization header.
+            All API requests require authentication using an API key in the
+            X-API-Key header.
           </p>
           <CodeBlock
             id="auth-header"
-            code={`Authorization: Bearer YOUR_API_KEY`}
+            code={`X-API-Key: YOUR_API_KEY`}
             copiedCode={copiedCode}
             onCopy={copyToClipboard}
           />
           <h3 className="text-lg font-semibold text-white mt-6">
-            API Endpoints
+            API Key Management
           </h3>
           <div className="space-y-3">
             <div className="rounded-lg bg-white/5 p-4">
@@ -161,6 +171,199 @@ export default function DocsPage() {
               </p>
             </div>
           </div>
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Login Endpoints
+          </h3>
+          <div className="space-y-3">
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  POST
+                </span>
+                <code className="text-sm">/auth/login/request-code</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Request verification code
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  POST
+                </span>
+                <code className="text-sm">/auth/login/verify</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Verify code and login
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  POST
+                </span>
+                <code className="text-sm">/auth/login/wallet/challenge</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Request wallet challenge
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  POST
+                </span>
+                <code className="text-sm">/auth/login/wallet/verify</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Verify wallet signature and login
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "search",
+      title: "Search API",
+      content: (
+        <div className="space-y-4 text-gray-300">
+          <p>
+            The Search API allows you to perform semantic search on Twitter/X
+            post renderings for a specific user.
+          </p>
+          <h3 className="text-lg font-semibold text-white mt-6">Endpoint</h3>
+          <div className="rounded-lg bg-white/5 p-4">
+            <div className="flex items-center gap-2">
+              <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                POST
+              </span>
+              <code className="text-sm">/v1/search</code>
+            </div>
+            <p className="mt-2 text-sm text-gray-400">
+              Search relevant post renderings based on a semantic query
+            </p>
+          </div>
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Request Body
+          </h3>
+          <CodeBlock
+            id="search-request"
+            code={`{
+  "query": "What does he think about AI?",
+  "username": "elonmusk",
+  "platform": "X"
+}`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
+          />
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Example Request
+          </h3>
+          <CodeBlock
+            id="search-curl"
+            code={`curl -X POST "https://dev.doppelgangers.ai:3003/v1/search" \\
+  -H "X-API-Key: YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "What does he think about AI?",
+    "username": "elonmusk",
+    "platform": "X"
+  }'`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
+          />
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Response Codes
+          </h3>
+          <div className="space-y-3">
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                  200
+                </span>
+                <span className="text-sm text-gray-300">Search results</span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-yellow-500/20 px-2 py-0.5 text-xs font-medium text-yellow-400">
+                  402
+                </span>
+                <span className="text-sm text-gray-300">
+                  Insufficient credits
+                </span>
+              </div>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-red-500/20 px-2 py-0.5 text-xs font-medium text-red-400">
+                  404
+                </span>
+                <span className="text-sm text-gray-300">Dataset not found</span>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                If the dataset is not indexed, your request will be recorded for
+                demand tracking.
+              </p>
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      id: "renderings",
+      title: "Renderings API",
+      content: (
+        <div className="space-y-4 text-gray-300">
+          <p>
+            The Renderings API provides access to post renderings for a specific
+            Twitter/X user.
+          </p>
+          <h3 className="text-lg font-semibold text-white mt-6">Endpoints</h3>
+          <div className="space-y-3">
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-400">
+                  GET
+                </span>
+                <code className="text-sm">/v1/renderings</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Get all post full renderings for a user, with metadata
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-400">
+                  GET
+                </span>
+                <code className="text-sm">/v1/renderings/simple</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">
+                Get all simple renderings for a user
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <div className="flex items-center gap-2">
+                <span className="rounded bg-blue-500/20 px-2 py-0.5 text-xs font-medium text-blue-400">
+                  GET
+                </span>
+                <code className="text-sm">/v1/jobs/{"{id}"}/status</code>
+              </div>
+              <p className="mt-2 text-sm text-gray-400">Get job status</p>
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Example Request
+          </h3>
+          <CodeBlock
+            id="renderings-curl"
+            code={`curl -X GET "https://dev.doppelgangers.ai:3003/v1/renderings?username=elonmusk&platform=X" \\
+  -H "X-API-Key: YOUR_API_KEY"`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
+          />
         </div>
       ),
     },
@@ -173,9 +376,7 @@ export default function DocsPage() {
             Credits are used to pay for API requests. Each successful request
             consumes credits based on the operation type.
           </p>
-          <h3 className="text-lg font-semibold text-white mt-6">
-            Credit Endpoints
-          </h3>
+          <h3 className="text-lg font-semibold text-white mt-6">Endpoints</h3>
           <div className="space-y-3">
             <div className="rounded-lg bg-white/5 p-4">
               <div className="flex items-center gap-2">
@@ -223,7 +424,8 @@ export default function DocsPage() {
         <div className="space-y-4 text-gray-300">
           <p>
             The Demand API allows you to see which creators are most requested
-            by the community.
+            by the community. When you search for a user that is not yet
+            indexed, your request is automatically recorded.
           </p>
           <h3 className="text-lg font-semibold text-white mt-6">Endpoints</h3>
           <div className="space-y-3">
@@ -247,6 +449,82 @@ export default function DocsPage() {
               </div>
               <p className="mt-2 text-sm text-gray-400">
                 Get detailed demand for a specific username
+              </p>
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Example Response (404 with demand)
+          </h3>
+          <CodeBlock
+            id="demand-response"
+            code={`{
+  "error": "dataset_not_found",
+  "message": "No indexed data found for @username. Your request has been recorded.",
+  "requestedUsername": "username",
+  "demandRecorded": true,
+  "demandStats": {
+    "totalRequests": 1,
+    "uniqueRequesters": 1,
+    "rank": 1
+  },
+  "cta": {
+    "message": "Want this dataset? Mint the NFT to become the data owner!",
+    "mintUrl": "https://contextapi.com/mint/username"
+  }
+}`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
+          />
+        </div>
+      ),
+    },
+    {
+      id: "rate-limits",
+      title: "Rate Limits",
+      content: (
+        <div className="space-y-4 text-gray-300">
+          <p>
+            The API implements rate limiting to ensure fair usage. Rate limit
+            information is included in the response headers.
+          </p>
+          <h3 className="text-lg font-semibold text-white mt-6">
+            Rate Limit Headers
+          </h3>
+          <div className="space-y-3">
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Limit-Short</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Maximum requests per minute (default: 60)
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Limit-Long</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Maximum requests per day (default: 1000)
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Remaining-Short</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Remaining requests in current minute window
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Remaining-Long</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Remaining requests in current day window
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Reset-Short</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Seconds until the minute window resets
+              </p>
+            </div>
+            <div className="rounded-lg bg-white/5 p-4">
+              <code className="text-sm text-white">X-RateLimit-Reset-Long</code>
+              <p className="mt-2 text-sm text-gray-400">
+                Seconds until the day window resets
               </p>
             </div>
           </div>
@@ -301,7 +579,7 @@ export default function DocsPage() {
           <div>
             <h1 className="text-2xl font-bold text-white">Documentation</h1>
             <p className="mt-1 text-sm text-gray-400">
-              API reference and guides
+              Semantic search API for Twitter/X data
             </p>
           </div>
           <a
