@@ -37,7 +37,6 @@ const navItems: NavItem[] = [
   { label: "Billing", href: "/dashboard/billing", icon: Receipt },
   { label: "Account", href: "/dashboard/account", icon: User },
   { label: "Contact", href: "/dashboard/contact", icon: Mail },
-  { label: "Demand", href: "/dashboard/demand", icon: TrendingUp },
 ];
 
 interface DashboardLayoutProps {
@@ -71,7 +70,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#5800C3] to-[#8B5CF6] flex items-center justify-center">
                 <span className="text-white font-bold text-sm">C</span>
               </div>
-              <span className="font-semibold text-white">ContextAPI.com</span>
+              <span className="font-semibold text-white">GetContext.com</span>
             </Link>
           )}
           <button
@@ -137,12 +136,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </button>
           {!isCollapsed && developer && (
             <a
-              href="https://contextapi.com"
+              href="https://getcontext.com"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block text-xs text-gray-500 hover:text-gray-400 px-3"
             >
-              https://contextapi.com
+              https://getcontext.com
             </a>
           )}
         </div>

@@ -70,7 +70,7 @@ export default function DocsPage() {
       content: (
         <div className="space-y-4 text-gray-300">
           <p>
-            Welcome to the ContextAPI documentation. This guide will help you
+            Welcome to the GetContext documentation. This guide will help you
             get started with our API.
           </p>
           <h3 className="text-lg font-semibold text-white mt-6">
@@ -91,7 +91,7 @@ export default function DocsPage() {
           </h3>
           <CodeBlock
             id="first-request"
-            code={`curl -X GET "https://api.contextapi.com/v1/transcript?video_id=dQw4w9WgXcQ" \\
+            code={`curl -X GET "https://api.getcontext.com/v1/transcript?video_id=dQw4w9WgXcQ" \\
   -H "Authorization: Bearer YOUR_API_KEY"`}
             copiedCode={copiedCode}
             onCopy={copyToClipboard}

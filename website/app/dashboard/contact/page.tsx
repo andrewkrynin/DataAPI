@@ -71,10 +71,10 @@ export default function ContactPage() {
                   <div>
                     <div className="text-sm text-gray-400">Email</div>
                     <a
-                      href="mailto:support@contextapi.com"
+                      href="mailto:support@getcontext.com"
                       className="text-white hover:text-[#8B5CF6] transition-colors"
                     >
-                      support@contextapi.com
+                      support@getcontext.com
                     </a>
                   </div>
                 </div>
@@ -85,7 +85,7 @@ export default function ContactPage() {
                   <div>
                     <div className="text-sm text-gray-400">Discord</div>
                     <a
-                      href="https://discord.gg/contextapi"
+                      href="https://discord.gg/getcontext"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-white hover:text-[#8B5CF6] transition-colors"

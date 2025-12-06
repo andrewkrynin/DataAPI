@@ -49,6 +49,7 @@ type MintStep = "idle" | "checking" | "connecting" | "minting" | "success" | "er
 
 export default function ClaimPage() {
   const [sourceUrl, setSourceUrl] = useState("");
+  const [urlError, setUrlError] = useState<string | null>(null);
   const [isWalletOpen, setIsWalletOpen] = useState(false);
   const [requests, setRequests] = useState<RequestItem[]>(INITIAL_DATA);
   const [filter, setFilter] = useState<"latest" | "largest">("latest");
@@ -60,6 +61,27 @@ export default function ClaimPage() {
 
   const { isConnected, openModal, address, isReady } = useWallet();
   const { mint, checkUrlRegistered, isLoading, error, txHash, success, reset } = useNFTMint();
+
+  // Validate URL format
+  const isValidUrl = (value: string): boolean => {
+    try {
+      const url = new URL(value);
+      return url.protocol === "http:" || url.protocol === "https:";
+    } catch {
+      return false;
+    }
+  };
+
+  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSourceUrl(value);
+
+    if (value && !isValidUrl(value)) {
+      setUrlError("Please enter a valid URL (e.g., https://x.com/elonmusk)");
+    } else {
+      setUrlError(null);
+    }
+  };
 
   // Update current time for relative timestamps
   useEffect(() => {
@@ -124,7 +146,7 @@ export default function ClaimPage() {
   // Main claim flow
   const handleClaim = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sourceUrl) return;
+    if (!sourceUrl || !isValidUrl(sourceUrl)) return;
 
     reset();
     setIsWalletOpen(true);
@@ -228,17 +250,27 @@ export default function ClaimPage() {
               <div className="relative">
                 <input
                   id="source-url"
-                  type="text"
+                  type="url"
                   placeholder="Enter URL (e.g., https://x.com/elonmusk)"
                   value={sourceUrl}
-                  onChange={(e) => setSourceUrl(e.target.value)}
-                  className="w-full h-14 pl-6 pr-4 rounded-lg bg-black/50 border border-white/10 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-[#5800C3] focus:border-transparent transition-all"
+                  onChange={handleUrlChange}
+                  className={`w-full h-14 pl-6 pr-4 rounded-lg bg-black/50 border text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
+                    urlError
+                      ? "border-red-500 focus:ring-red-500"
+                      : "border-white/10 focus:ring-[#5800C3]"
+                  }`}
                   required
                 />
+                {urlError && (
+                  <p className="absolute -bottom-6 left-0 text-red-400 text-sm">
+                    {urlError}
+                  </p>
+                )}
               </div>
               <button
                 type="submit"
-                className="h-14 w-full rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 transition-transform hover:scale-[1.02] active:scale-[0.98]"
+                disabled={!!urlError || !sourceUrl}
+                className="h-14 w-full rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 Check Availability & Mint
               </button>
