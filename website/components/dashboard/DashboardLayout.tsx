@@ -17,6 +17,7 @@ import {
   ChevronLeft,
   TrendingUp,
   type LucideIcon,
+  Database,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { WalletPanel } from "./WalletPanel";
@@ -116,6 +117,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <div className="absolute bottom-0 left-0 right-0 border-t border-white/10 p-3 space-y-3">
           {/* Wallet Panel */}
           <WalletPanel isCollapsed={isCollapsed} />
+
+          <Link
+            href="/nft-app/dashboard"
+            className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 px-4 py-2.5 text-sm font-medium text-white hover:from-purple-500 hover:to-cyan-500 transition-all shadow-lg shadow-purple-500/20"
+          >
+            <Database className="h-4 w-4" />
+            NFT Dashboard
+          </Link>
 
           {/* Logout */}
           <button

@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, ShoppingCart,
   UserCircle, MessageSquare, Zap,
   LogOut, Database,
   type LucideIcon
 } from "lucide-react";
+import { useAuthStore } from "@/stores/authStore";
+import { useState } from "react";
+import { WalletPanel } from "./dashboard";
 
 type NavItem = {
   name: string;
@@ -16,15 +19,24 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Claim", href: "/claim", icon: Zap },
-  { name: "Marketplace", href: "/marketplace", icon: ShoppingCart },
-  { name: "Account", href: "/account", icon: UserCircle },
-  { name: "Contact", href: "/contact", icon: MessageSquare },
+  { name: "Dashboard", href: "/nft-app/dashboard", icon: LayoutDashboard },
+  { name: "Claim", href: "/nft-app/claim", icon: Zap },
+  { name: "Marketplace", href: "/nft-app/marketplace", icon: ShoppingCart },
+  { name: "Account", href: "/nft-app/account", icon: UserCircle },
+  { name: "Contact", href: "/nft-app/contact", icon: MessageSquare },
 ];
 
 export function NftSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { logout, developer } = useAuthStore();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    router.push("/");
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-white/10 bg-black">
@@ -47,8 +59,8 @@ export function NftSidebar() {
                   <Link
                     href={item.href}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isActive
-                        ? "bg-[#5800C3] text-white"
-                        : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                      ? "bg-[#5800C3] text-white"
+                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
                       }`}
                   >
                     <Icon className="h-5 w-5" />
@@ -61,18 +73,36 @@ export function NftSidebar() {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-white/10 p-4">
+        <div className="border-t border-white/10 p-4 gap-3 flex flex-col">
+          {/* Wallet Panel */}
+          <WalletPanel isCollapsed={isCollapsed} />
+
           <Link
-            href="/app"
+            href="/dashboard"
             className="flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-purple-600 to-cyan-600 px-4 py-2.5 text-sm font-medium text-white hover:from-purple-500 hover:to-cyan-500 transition-all shadow-lg shadow-purple-500/20"
           >
             <Database className="h-4 w-4" />
             Developer Portal
           </Link>
-          <button className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium text-zinc-500 hover:bg-white/5 hover:text-zinc-300 transition-colors">
-            <LogOut className="h-4 w-4" />
-            Sign Out
+          {/* Logout */}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-white transition-all"
+          >
+            <LogOut className="h-5 w-5 shrink-0" />
+            {!isCollapsed && <span>Logout</span>}
           </button>
+          {!isCollapsed && developer && (
+            <a
+              href="https://contextapi.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 block text-xs text-gray-500 hover:text-gray-400 px-3"
+            >
+              https://contextapi.com
+            </a>
+          )}
         </div>
       </div>
     </aside>

@@ -5,9 +5,13 @@ import {
   Wallet, Shield, Zap, Box, X,
   Search, Clock,
   TrendingUp, ArrowUpRight,
-  Twitter, Youtube, Linkedin, Instagram
+  Twitter, Youtube, Linkedin, Instagram,
+  Loader2, CheckCircle2, AlertCircle, ExternalLink
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useWallet } from "@/components/providers/Web3Provider";
+import { useNFTMint } from "@/hooks/useNFTMint";
+import { BSC_TESTNET } from "@/lib/contracts/DataOwnershipNFT";
 
 // Mock data types
 type RequestItem = {
@@ -41,6 +45,8 @@ const formatPoints = (min: number, max: number) => {
   return `${min.toLocaleString()}-${max.toLocaleString()} points`;
 };
 
+type MintStep = "idle" | "checking" | "connecting" | "minting" | "success" | "error";
+
 export default function ClaimPage() {
   const [sourceUrl, setSourceUrl] = useState("");
   const [isWalletOpen, setIsWalletOpen] = useState(false);
@@ -49,6 +55,11 @@ export default function ClaimPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isStreamActive] = useState(true);
   const [currentTime, setCurrentTime] = useState(() => Date.now());
+  const [mintStep, setMintStep] = useState<MintStep>("idle");
+  const [urlAvailable, setUrlAvailable] = useState<boolean | null>(null);
+
+  const { isConnected, openModal, address, isReady } = useWallet();
+  const { mint, checkUrlRegistered, isLoading, error, txHash, success, reset } = useNFTMint();
 
   // Update current time for relative timestamps
   useEffect(() => {
@@ -88,17 +99,103 @@ export default function ClaimPage() {
       return b.timestamp - a.timestamp;
     });
 
-  const handleClaim = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (sourceUrl) {
-      setIsWalletOpen(true);
+  // Check URL availability
+  const handleCheckUrl = async (url: string) => {
+    if (!url) return;
+
+    setMintStep("checking");
+    setUrlAvailable(null);
+
+    try {
+      const isRegistered = await checkUrlRegistered(url);
+      setUrlAvailable(!isRegistered);
+
+      if (isRegistered) {
+        setMintStep("error");
+      } else {
+        setMintStep("idle");
+      }
+    } catch {
+      setMintStep("error");
+      setUrlAvailable(null);
     }
   };
 
+  // Main claim flow
+  const handleClaim = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!sourceUrl) return;
+
+    reset();
+    setIsWalletOpen(true);
+
+    // Step 1: Check URL availability
+    setMintStep("checking");
+    const isRegistered = await checkUrlRegistered(sourceUrl);
+
+    if (isRegistered) {
+      setUrlAvailable(false);
+      setMintStep("error");
+      return;
+    }
+
+    setUrlAvailable(true);
+
+    // Step 2: Connect wallet if not connected
+    if (!isConnected) {
+      setMintStep("connecting");
+      await openModal();
+      return; // Modal handles connection, user will need to click again after connecting
+    }
+
+    // Step 3: Mint NFT
+    await executeMint(sourceUrl);
+  };
+
+  // Execute minting after wallet is connected
+  const executeMint = async (url: string) => {
+    setMintStep("minting");
+    const result = await mint(url);
+
+    if (result) {
+      setMintStep("success");
+    } else {
+      setMintStep("error");
+    }
+  };
+
+  // Handle claim from feed
   const handleFeedClaim = (url: string) => {
     setSourceUrl(url);
+    reset();
+    setMintStep("idle");
+    setUrlAvailable(null);
     setIsWalletOpen(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // Close modal and reset state
+  const handleCloseModal = () => {
+    setIsWalletOpen(false);
+    if (success) {
+      setSourceUrl("");
+      setMintStep("idle");
+      setUrlAvailable(null);
+      reset();
+    }
+  };
+
+  // Continue minting after wallet connection
+  const handleContinueMint = async () => {
+    if (!sourceUrl) return;
+
+    if (!isConnected) {
+      setMintStep("connecting");
+      await openModal();
+      return;
+    }
+
+    await executeMint(sourceUrl);
   };
 
   return (
@@ -323,7 +420,7 @@ export default function ClaimPage() {
         </div>
       </div>
 
-      {/* Wallet Connection Modal */}
+      {/* Minting Modal */}
       <AnimatePresence>
         {isWalletOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
@@ -331,7 +428,7 @@ export default function ClaimPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setIsWalletOpen(false)}
+              onClick={handleCloseModal}
               className="absolute inset-0 bg-black/80 backdrop-blur-sm"
             />
             <motion.div
@@ -341,37 +438,193 @@ export default function ClaimPage() {
               className="relative w-full max-w-md rounded-2xl border border-white/10 bg-[#0A0A0A] p-6 shadow-2xl"
             >
               <button
-                onClick={() => setIsWalletOpen(false)}
+                onClick={handleCloseModal}
                 className="absolute right-4 top-4 text-zinc-500 hover:text-white"
-                aria-label="Close wallet connection modal"
+                aria-label="Close modal"
               >
                 <X className="h-5 w-5" />
               </button>
 
-              <div className="mb-6 text-center">
-                <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#5800C3]/20">
-                  <Wallet className="h-6 w-6 text-[#C2C4F9]" />
+              {/* Checking URL */}
+              {mintStep === "checking" && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#5800C3]/20">
+                    <Loader2 className="h-8 w-8 text-[#C2C4F9] animate-spin" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Checking Availability</h2>
+                  <p className="text-zinc-400 text-sm break-all">{sourceUrl}</p>
                 </div>
-                <h2 className="text-2xl font-bold text-white">Connect Wallet</h2>
-                <p className="mt-2 text-zinc-400">
-                  Connect your wallet to verify availability of <span className="text-white font-medium">{sourceUrl}</span> and mint your Data Stream NFT.
-                </p>
-              </div>
+              )}
 
-              <div className="space-y-3">
-                {["MetaMask", "WalletConnect", "Coinbase Wallet"].map((wallet) => (
+              {/* URL Not Available */}
+              {mintStep === "error" && urlAvailable === false && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
+                    <AlertCircle className="h-8 w-8 text-red-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Already Claimed</h2>
+                  <p className="text-zinc-400 text-sm mb-6">
+                    This data source has already been minted by another user.
+                  </p>
                   <button
-                    key={wallet}
-                    className="flex w-full items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 transition-colors hover:bg-white/10 hover:border-[#5800C3]/50"
+                    onClick={handleCloseModal}
+                    className="w-full h-12 rounded-lg bg-white/10 font-semibold text-white hover:bg-white/20 transition-colors"
                   >
-                    <span className="font-medium text-white">{wallet}</span>
-                    <div className="h-2 w-2 rounded-full bg-green-500/50" />
+                    Try Another URL
                   </button>
-                ))}
-              </div>
+                </div>
+              )}
+
+              {/* Minting Error */}
+              {mintStep === "error" && urlAvailable !== false && error && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/20">
+                    <AlertCircle className="h-8 w-8 text-red-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Minting Failed</h2>
+                  <p className="text-zinc-400 text-sm mb-6">{error}</p>
+                  <div className="space-y-3">
+                    <button
+                      onClick={handleContinueMint}
+                      className="w-full h-12 rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 hover:opacity-90 transition-opacity"
+                    >
+                      Try Again
+                    </button>
+                    <button
+                      onClick={handleCloseModal}
+                      className="w-full h-12 rounded-lg bg-white/10 font-semibold text-white hover:bg-white/20 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Connect Wallet */}
+              {mintStep === "connecting" && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#5800C3]/20">
+                    <Wallet className="h-8 w-8 text-[#C2C4F9]" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Connect Wallet</h2>
+                  <p className="text-zinc-400 text-sm mb-2">
+                    URL is available! Connect your wallet to mint.
+                  </p>
+                  <p className="text-white font-medium text-sm break-all mb-6">{sourceUrl}</p>
+
+                  {isConnected ? (
+                    <div className="space-y-4">
+                      <div className="p-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                        <div className="flex items-center justify-center gap-2 text-green-400">
+                          <CheckCircle2 className="h-5 w-5" />
+                          <span className="font-medium">Wallet Connected</span>
+                        </div>
+                        <p className="text-zinc-400 text-xs mt-1 font-mono">
+                          {address?.slice(0, 6)}...{address?.slice(-4)}
+                        </p>
+                      </div>
+                      <button
+                        onClick={handleContinueMint}
+                        className="w-full h-12 rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 hover:opacity-90 transition-opacity"
+                      >
+                        Continue to Mint
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={openModal}
+                      disabled={!isReady}
+                      className="w-full h-12 rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 hover:opacity-90 transition-opacity disabled:opacity-50"
+                    >
+                      {isReady ? "Connect Wallet" : "Loading..."}
+                    </button>
+                  )}
+                </div>
+              )}
+
+              {/* Idle state - ready to mint */}
+              {mintStep === "idle" && urlAvailable === true && isConnected && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+                    <CheckCircle2 className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">URL Available!</h2>
+                  <p className="text-zinc-400 text-sm mb-2">Ready to mint your Data Stream NFT</p>
+                  <p className="text-white font-medium text-sm break-all mb-6">{sourceUrl}</p>
+
+                  <button
+                    onClick={handleContinueMint}
+                    className="w-full h-12 rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 hover:opacity-90 transition-opacity"
+                  >
+                    Mint NFT
+                  </button>
+                </div>
+              )}
+
+              {/* Minting in progress */}
+              {mintStep === "minting" && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-[#5800C3]/20">
+                    <Loader2 className="h-8 w-8 text-[#C2C4F9] animate-spin" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Minting NFT</h2>
+                  <p className="text-zinc-400 text-sm mb-4">
+                    Please confirm the transaction in your wallet...
+                  </p>
+                  {txHash && (
+                    <a
+                      href={`${BSC_TESTNET.blockExplorer}/tx/${txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-[#C2C4F9] hover:underline text-sm"
+                    >
+                      View on BscScan <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+                </div>
+              )}
+
+              {/* Success */}
+              {mintStep === "success" && (
+                <div className="text-center py-8">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+                    <CheckCircle2 className="h-8 w-8 text-green-400" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Successfully Minted!</h2>
+                  <p className="text-zinc-400 text-sm mb-6">
+                    Your Data Stream NFT has been created. You can now earn rewards when this data is queried.
+                  </p>
+
+                  {txHash && (
+                    <a
+                      href={`${BSC_TESTNET.blockExplorer}/tx/${txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-[#C2C4F9] hover:underline text-sm mb-6"
+                    >
+                      View Transaction <ExternalLink className="h-4 w-4" />
+                    </a>
+                  )}
+
+                  <div className="space-y-3 mt-6">
+                    <a
+                      href="/nft-app/dashboard"
+                      className="block w-full h-12 rounded-lg bg-gradient-primary font-semibold text-white shadow-lg shadow-[#5800C3]/20 hover:opacity-90 transition-opacity leading-[48px]"
+                    >
+                      View Dashboard
+                    </a>
+                    <button
+                      onClick={handleCloseModal}
+                      className="w-full h-12 rounded-lg bg-white/10 font-semibold text-white hover:bg-white/20 transition-colors"
+                    >
+                      Mint Another
+                    </button>
+                  </div>
+                </div>
+              )}
 
               <p className="mt-6 text-center text-xs text-zinc-500">
-                By connecting, you agree to our Terms of Service and Privacy Policy.
+                NFTs are minted on BSC Testnet. Make sure you have BNB for gas fees.
               </p>
             </motion.div>
           </div>
