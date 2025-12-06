@@ -31,10 +31,10 @@ const MOCK_NFTS: NFT[] = [
     username: "elonmusk",
     owner: "CryptoWhale",
     ownerAddress: "0x742d...9c8a",
-    price: 5000,
-    lastPrice: 4500,
+    price: 5,
+    lastPrice: 4.5,
     totalQueries: 125000,
-    totalEarnings: 8500,
+    totalEarnings: 8.5,
     dailyQueries: 420,
     verified: true,
   },
@@ -45,9 +45,9 @@ const MOCK_NFTS: NFT[] = [
     owner: "DataCollector",
     ownerAddress: "0x123a...4b5c",
     price: null,
-    lastPrice: 12000,
+    lastPrice: 12,
     totalQueries: 98000,
-    totalEarnings: 15200,
+    totalEarnings: 15.2,
     dailyQueries: 650,
     verified: true,
   },
@@ -57,10 +57,10 @@ const MOCK_NFTS: NFT[] = [
     username: "satyanadella",
     owner: "TechInvestor",
     ownerAddress: "0x456d...7e8f",
-    price: 2500,
-    lastPrice: 2300,
+    price: 2.5,
+    lastPrice: 2.3,
     totalQueries: 45000,
-    totalEarnings: 3200,
+    totalEarnings: 3.2,
     dailyQueries: 180,
     verified: true,
   },
@@ -70,10 +70,10 @@ const MOCK_NFTS: NFT[] = [
     username: "sama",
     owner: "AIFanatic",
     ownerAddress: "0x789g...1h2i",
-    price: 3500,
-    lastPrice: 3000,
+    price: 3.5,
+    lastPrice: 3.0,
     totalQueries: 67000,
-    totalEarnings: 5100,
+    totalEarnings: 5.1,
     dailyQueries: 290,
     verified: true,
   },
@@ -83,10 +83,10 @@ const MOCK_NFTS: NFT[] = [
     username: "kyliejenner",
     owner: "SocialWhale",
     ownerAddress: "0xabc3...4j5k",
-    price: 8000,
-    lastPrice: 7500,
+    price: 8,
+    lastPrice: 7.5,
     totalQueries: 145000,
-    totalEarnings: 12800,
+    totalEarnings: 12.8,
     dailyQueries: 580,
     verified: true,
   },
@@ -97,9 +97,9 @@ const MOCK_NFTS: NFT[] = [
     owner: "ScienceNerd",
     ownerAddress: "0xdef6...7l8m",
     price: null,
-    lastPrice: 4200,
+    lastPrice: 4.2,
     totalQueries: 52000,
-    totalEarnings: 4900,
+    totalEarnings: 4.9,
     dailyQueries: 220,
     verified: false,
   },
@@ -131,8 +131,8 @@ export default function MarketplacePage() {
     .filter(nft => {
       const matchesSearch = nft.username.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesPlatform = platformFilter === "all" || nft.platform === platformFilter;
-      const matchesStatus = 
-        statusFilter === "all" || 
+      const matchesStatus =
+        statusFilter === "all" ||
         (statusFilter === "sale" && nft.price !== null) ||
         (statusFilter === "not_sale" && nft.price === null);
       return matchesSearch && matchesPlatform && matchesStatus;
@@ -160,11 +160,11 @@ export default function MarketplacePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
           <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
             <div className="text-xs text-zinc-500 uppercase tracking-wider">Total Volume</div>
-            <div className="text-2xl font-bold text-white">45,000 pts</div>
+            <div className="text-2xl font-bold text-white">45.0 BNB</div>
           </div>
           <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
             <div className="text-xs text-zinc-500 uppercase tracking-wider">Floor Price</div>
-            <div className="text-2xl font-bold text-[#C2C4F9]">2,500 pts</div>
+            <div className="text-2xl font-bold text-[#C2C4F9]">2.5 BNB</div>
           </div>
           <div className="bg-white/5 border border-white/10 p-4 rounded-xl">
             <div className="text-xs text-zinc-500 uppercase tracking-wider">Listed</div>
@@ -182,11 +182,10 @@ export default function MarketplacePage() {
             <div className="flex flex-wrap gap-2 w-full lg:w-auto">
               <button
                 onClick={() => setPlatformFilter("all")}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  platformFilter === "all" 
-                    ? "bg-[#5800C3] text-white" 
-                    : "bg-white/5 text-zinc-400 hover:bg-white/10"
-                }`}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${platformFilter === "all"
+                  ? "bg-[#5800C3] text-white"
+                  : "bg-white/5 text-zinc-400 hover:bg-white/10"
+                  }`}
               >
                 All Platforms
               </button>
@@ -194,11 +193,10 @@ export default function MarketplacePage() {
                 <button
                   key={platform}
                   onClick={() => setPlatformFilter(platform)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all ${
-                    platformFilter === platform 
-                      ? "bg-[#5800C3] text-white" 
-                      : "bg-white/5 text-zinc-400 hover:bg-white/10"
-                  }`}
+                  className={`px-4 py-2 rounded-full text-sm font-medium capitalize transition-all ${platformFilter === platform
+                    ? "bg-[#5800C3] text-white"
+                    : "bg-white/5 text-zinc-400 hover:bg-white/10"
+                    }`}
                 >
                   {platform}
                 </button>
@@ -291,7 +289,7 @@ export default function MarketplacePage() {
                   </div>
                   <div className="bg-white/5 rounded-lg p-2">
                     <div className="text-zinc-500 text-xs">Earnings</div>
-                    <div className="text-[#C2C4F9] font-semibold">{nft.totalEarnings} pts</div>
+                    <div className="text-[#C2C4F9] font-semibold">{nft.totalEarnings} BNB</div>
                   </div>
                 </div>
 
@@ -301,16 +299,16 @@ export default function MarketplacePage() {
                     {nft.price ? (
                       <>
                         <div className="text-xs text-zinc-500">Price</div>
-                        <div className="text-xl font-bold text-white">{nft.price.toLocaleString()} pts</div>
+                        <div className="text-xl font-bold text-white">{nft.price.toLocaleString()} BNB</div>
                       </>
                     ) : (
                       <>
                         <div className="text-xs text-zinc-500">Last Sale</div>
-                        <div className="text-lg font-semibold text-zinc-400">{nft.lastPrice.toLocaleString()} pts</div>
+                        <div className="text-lg font-semibold text-zinc-400">{nft.lastPrice.toLocaleString()} BNB</div>
                       </>
                     )}
                   </div>
-                  
+
                   {nft.price ? (
                     <button
                       onClick={handleAction}

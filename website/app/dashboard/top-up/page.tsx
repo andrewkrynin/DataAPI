@@ -20,7 +20,7 @@ const pricingPlans: PricingPlan[] = [
     id: "starter",
     name: "Starter",
     credits: 100,
-    price: 10,
+    price: 0.01,
     pricePerCredit: 0.1,
     icon: Zap,
   },
@@ -28,7 +28,7 @@ const pricingPlans: PricingPlan[] = [
     id: "pro",
     name: "Pro",
     credits: 500,
-    price: 40,
+    price: 0.1,
     pricePerCredit: 0.08,
     popular: true,
     icon: Star,
@@ -37,7 +37,7 @@ const pricingPlans: PricingPlan[] = [
     id: "business",
     name: "Business",
     credits: 2000,
-    price: 120,
+    price: 0.2,
     pricePerCredit: 0.06,
     icon: Crown,
   },
@@ -141,7 +141,7 @@ export default function TopUpPage() {
                   </h3>
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className="text-3xl font-bold text-white">
-                      ${plan.price}
+                      BNB{plan.price}
                     </span>
                   </div>
                   <div className="mt-1 text-sm text-gray-400">
@@ -151,7 +151,7 @@ export default function TopUpPage() {
 
                 <div className="mt-4 pt-4 border-t border-white/10">
                   <div className="text-sm text-gray-400">
-                    ${plan.pricePerCredit.toFixed(2)} per credit
+                    BNB{plan.pricePerCredit.toFixed(2)} per credit
                   </div>
                 </div>
               </button>
