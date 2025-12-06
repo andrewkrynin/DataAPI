@@ -22,7 +22,6 @@ const NAV_ITEMS: NavItem[] = [
   { name: "Dashboard", href: "/nft-app/dashboard", icon: LayoutDashboard },
   { name: "Claim", href: "/nft-app/claim", icon: Zap },
   { name: "Marketplace", href: "/nft-app/marketplace", icon: ShoppingCart },
-  { name: "Account", href: "/nft-app/account", icon: UserCircle },
   { name: "Contact", href: "/nft-app/contact", icon: MessageSquare },
 ];
 
