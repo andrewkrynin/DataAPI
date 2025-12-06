@@ -71,10 +71,10 @@ export default function ContactPage() {
                   <div>
                     <div className="text-sm text-gray-400">Email</div>
                     <a
-                      href="mailto:support@getcontext.com"
+                      href="mailto:support@getcontext.now"
                       className="text-white hover:text-[#8B5CF6] transition-colors"
                     >
-                      support@getcontext.com
+                      support@getcontext.now
                     </a>
                   </div>
                 </div>

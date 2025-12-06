@@ -91,7 +91,7 @@ export default function DocsPage() {
           </h3>
           <CodeBlock
             id="first-request"
-            code={`curl -X GET "https://api.getcontext.com/v1/transcript?video_id=dQw4w9WgXcQ" \\
+            code={`curl -X GET "https://api.getcontext.now/v1/transcript?video_id=dQw4w9WgXcQ" \\
   -H "Authorization: Bearer YOUR_API_KEY"`}
             copiedCode={copiedCode}
             onCopy={copyToClipboard}

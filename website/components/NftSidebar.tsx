@@ -95,12 +95,12 @@ export function NftSidebar() {
           </button>
           {!isCollapsed && developer && (
             <a
-              href="https://getcontext.com"
+              href="https://getcontext.now"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block text-xs text-gray-500 hover:text-gray-400 px-3"
             >
-              https://getcontext.com
+              https://getcontext.now
             </a>
           )}
         </div>

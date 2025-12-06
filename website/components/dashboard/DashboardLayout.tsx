@@ -70,7 +70,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#5800C3] to-[#8B5CF6] flex items-center justify-center">
                 <span className="text-white font-bold text-sm">C</span>
               </div>
-              <span className="font-semibold text-white">GetContext.com</span>
+              <span className="font-semibold text-white">GetContext</span>
             </Link>
           )}
           <button
@@ -136,12 +136,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </button>
           {!isCollapsed && developer && (
             <a
-              href="https://getcontext.com"
+              href="https://getcontext.now"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-2 block text-xs text-gray-500 hover:text-gray-400 px-3"
             >
-              https://getcontext.com
+              https://getcontext.now
             </a>
           )}
         </div>
