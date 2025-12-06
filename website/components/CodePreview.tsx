@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Twitter, Youtube, Instagram, Linkedin } from "lucide-react";
+import { Twitter, Youtube, Linkedin } from "lucide-react";
 
 const EXAMPLES = [
   {

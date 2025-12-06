@@ -2,7 +2,6 @@
 
 import { Check, HelpCircle } from "lucide-react";
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // Point costs for different actions
@@ -59,7 +58,7 @@ const PLANS = [
 ];
 
 export function Pricing() {
-  const [isAnnual, setIsAnnual] = useState(false);
+  const [isAnnual] = useState(false);
 
   return (
     <section id="pricing" className="py-24 bg-zinc-900/50 border-t border-white/5">

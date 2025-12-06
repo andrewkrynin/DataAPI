@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Wallet, ChevronUp, ChevronDown, ExternalLink, Copy, Check } from "lucide-react";
-import { BrowserProvider, formatEther, Contract } from "ethers";
+import { BrowserProvider, formatEther, Contract, Eip1193Provider } from "ethers";
 import { clsx } from "clsx";
 import {
   DATA_OWNERSHIP_NFT_ADDRESS,
@@ -22,17 +22,18 @@ export function WalletPanel({ isCollapsed }: WalletPanelProps) {
   const [nftCount, setNftCount] = useState<number>(0);
   const [copied, setCopied] = useState(false);
 
+  // Reset state when disconnected
+  const shouldFetch = isConnected && address && window.ethereum;
+
   // Fetch balance and NFT count
   useEffect(() => {
-    if (!isConnected || !address || !window.ethereum) {
-      setBalance(null);
-      setNftCount(0);
+    if (!shouldFetch) {
       return;
     }
 
     const fetchData = async () => {
       try {
-        const provider = new BrowserProvider(window.ethereum as any);
+        const provider = new BrowserProvider(window.ethereum as unknown as Eip1193Provider);
 
         // Get BNB balance
         const bal = await provider.getBalance(address);
@@ -50,11 +51,13 @@ export function WalletPanel({ isCollapsed }: WalletPanelProps) {
         }
       } catch (err) {
         console.error("Error fetching wallet data:", err);
+        setBalance(null);
+        setNftCount(0);
       }
     };
 
     fetchData();
-  }, [isConnected, address]);
+  }, [shouldFetch, address]);
 
   const copyAddress = async () => {
     if (!address) return;

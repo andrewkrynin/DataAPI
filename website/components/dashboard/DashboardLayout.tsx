@@ -16,6 +16,7 @@ import {
   LogOut,
   ChevronLeft,
   TrendingUp,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
 import { WalletPanel } from "./WalletPanel";
@@ -23,7 +24,7 @@ import { WalletPanel } from "./WalletPanel";
 interface NavItem {
   label: string;
   href: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
 }
 
 const navItems: NavItem[] = [

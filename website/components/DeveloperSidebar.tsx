@@ -2,16 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, Key, FileText, CreditCard, 
+import {
+  LayoutDashboard, Key, CreditCard,
   UserCircle, MessageSquare, Share2, Database,
-  ChevronLeft, LogOut
+  LogOut,
+  type LucideIcon
 } from "lucide-react";
 
 type NavItem = {
   name: string;
   href: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
 };
 
 const NAV_ITEMS: NavItem[] = [

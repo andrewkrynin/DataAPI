@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  User, Wallet, TrendingUp, DollarSign, 
-  Database, Settings, ExternalLink, ArrowRight,
+import {
+  Wallet, TrendingUp, DollarSign,
+  Database, Settings, ArrowRight,
   Twitter, Youtube, Linkedin, Instagram,
-  BarChart3, Clock, Eye, Edit
+  Eye, Edit
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";

@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Search, Filter, TrendingUp, Eye, 
+import {
+  Search,
   Twitter, Youtube, Linkedin, Instagram, ShoppingCart,
-  Tag, BarChart3
+  Tag
 } from "lucide-react";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 // Mock NFT data
 type NFT = {
@@ -203,7 +202,7 @@ export default function MarketplacePage() {
             <div className="flex gap-2 w-full lg:w-auto">
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
+                onChange={(e) => setStatusFilter(e.target.value as "all" | "sale" | "not_sale")}
                 className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5800C3]"
               >
                 <option value="all">All Items</option>
@@ -213,7 +212,7 @@ export default function MarketplacePage() {
 
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
+                onChange={(e) => setSortBy(e.target.value as "price" | "queries" | "earnings")}
                 className="px-4 py-2 rounded-lg bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:ring-2 focus:ring-[#5800C3]"
               >
                 <option value="queries">Most Queries</option>

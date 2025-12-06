@@ -41,7 +41,7 @@ export default function ContactPage() {
           >
             <h1 className="text-4xl font-bold text-white mb-4">Get in Touch</h1>
             <p className="text-xl text-zinc-400 max-w-2xl mx-auto">
-              Have a question or need help? We're here to assist you.
+              Have a question or need help? We&apos;re here to assist you.
             </p>
           </motion.div>
         </div>
@@ -207,7 +207,7 @@ export default function ContactPage() {
                 </button>
 
                 <p className="text-sm text-zinc-500 text-center">
-                  We'll get back to you within 24 hours
+                  We&apos;ll get back to you within 24 hours
                 </p>
               </motion.form>
             ) : (
@@ -222,7 +222,7 @@ export default function ContactPage() {
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-2">Message Sent!</h3>
                 <p className="text-zinc-400">
-                  Thank you for contacting us. We'll respond to your inquiry shortly.
+                  Thank you for contacting us. We&apos;ll respond to your inquiry shortly.
                 </p>
               </motion.div>
             )}

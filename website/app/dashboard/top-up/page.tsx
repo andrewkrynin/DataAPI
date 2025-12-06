@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { CreditCard, Check, Zap, Star, Crown } from "lucide-react";
+import { CreditCard, Check, Zap, Star, Crown, LucideIcon } from "lucide-react";
 import { useAuthStore } from "@/stores/authStore";
-import { clsx } from "clsx";
+import clsx from "clsx";
 
 interface PricingPlan {
   id: string;
@@ -12,7 +12,7 @@ interface PricingPlan {
   price: number;
   pricePerCredit: number;
   popular?: boolean;
-  icon: React.ElementType;
+  icon: LucideIcon;
 }
 
 const pricingPlans: PricingPlan[] = [

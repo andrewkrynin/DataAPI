@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import {
   FileText,
   ChevronRight,
@@ -16,35 +16,22 @@ interface DocSection {
   content: React.ReactNode;
 }
 
-export default function DocsPage() {
-  const [activeSection, setActiveSection] = useState("getting-started");
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+interface CodeBlockProps {
+  code: string;
+  id: string;
+  copiedCode: string | null;
+  onCopy: (text: string, id: string) => void;
+}
 
-  async function copyToClipboard(text: string, id: string) {
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedCode(id);
-      setTimeout(() => setCopiedCode(null), 2000);
-    } catch {
-      console.error("Failed to copy");
-    }
-  }
-
-  const CodeBlock = ({
-    code,
-    id,
-    language = "bash",
-  }: {
-    code: string;
-    id: string;
-    language?: string;
-  }) => (
+function CodeBlock({ code, id, copiedCode, onCopy }: CodeBlockProps) {
+  return (
     <div className="relative my-4">
       <pre className="rounded-lg bg-black/50 p-4 text-sm text-gray-300 overflow-x-auto">
         <code>{code}</code>
       </pre>
       <button
-        onClick={() => copyToClipboard(code, id)}
+        type="button"
+        onClick={() => onCopy(code, id)}
         className={clsx(
           "absolute right-3 top-3 rounded-lg p-2 transition-colors",
           copiedCode === id
@@ -60,6 +47,21 @@ export default function DocsPage() {
       </button>
     </div>
   );
+}
+
+export default function DocsPage() {
+  const [activeSection, setActiveSection] = useState("getting-started");
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
+  const copyToClipboard = useCallback(async (text: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedCode(id);
+      setTimeout(() => setCopiedCode(null), 2000);
+    } catch {
+      console.error("Failed to copy");
+    }
+  }, []);
 
   const sections: DocSection[] = [
     {
@@ -91,6 +93,8 @@ export default function DocsPage() {
             id="first-request"
             code={`curl -X GET "https://api.contextapi.com/v1/transcript?video_id=dQw4w9WgXcQ" \\
   -H "Authorization: Bearer YOUR_API_KEY"`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
           />
         </div>
       ),
@@ -107,6 +111,8 @@ export default function DocsPage() {
           <CodeBlock
             id="auth-header"
             code={`Authorization: Bearer YOUR_API_KEY`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
           />
           <h3 className="text-lg font-semibold text-white mt-6">
             API Endpoints
@@ -199,12 +205,13 @@ export default function DocsPage() {
           </h3>
           <CodeBlock
             id="credits-response"
-            language="json"
             code={`{
   "balance": 100,
   "totalUsed": 50,
   "totalPurchased": 150
 }`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
           />
         </div>
       ),
@@ -266,7 +273,6 @@ export default function DocsPage() {
           </h3>
           <CodeBlock
             id="health-response"
-            language="json"
             code={`{
   "status": "healthy",
   "timestamp": "2025-01-01T00:00:00.000Z",
@@ -277,6 +283,8 @@ export default function DocsPage() {
     "queue": "up"
   }
 }`}
+            copiedCode={copiedCode}
+            onCopy={copyToClipboard}
           />
         </div>
       ),
@@ -315,6 +323,7 @@ export default function DocsPage() {
           <div className="space-y-1">
             {sections.map((section) => (
               <button
+                type="button"
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
                 className={clsx(

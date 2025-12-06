@@ -1,6 +1,5 @@
 "use client";
 
-import { clsx } from "clsx";
 import { HelpCircle } from "lucide-react";
 import type { ReactNode } from "react";
 

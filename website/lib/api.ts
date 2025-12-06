@@ -1,5 +1,4 @@
 import type {
-  ApiKey,
   ApiKeysResponse,
   RequestApiKeyRequest,
   RequestApiKeyResponse,

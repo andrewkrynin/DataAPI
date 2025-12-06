@@ -1,6 +1,6 @@
 "use client";
 
-import { Terminal, Copy, Check } from "lucide-react";
+import { Copy, Check } from "lucide-react";
 import { useState } from "react";
 
 export default function McpPage() {

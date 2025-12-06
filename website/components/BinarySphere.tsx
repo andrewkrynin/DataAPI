@@ -14,8 +14,8 @@ interface BinaryDigitProps {
 }
 
 function BinaryDigit({ position, digit, delay, animationProgress, angle }: BinaryDigitProps) {
-  const textRef = useRef<any>(null);
-  
+  const textRef = useRef<THREE.Object3D>(null);
+
   // Calculate glow based on animation progress and position
   const glowIntensity = useMemo(() => {
     const normalizedDelay = delay / 8;
@@ -28,7 +28,7 @@ function BinaryDigit({ position, digit, delay, animationProgress, angle }: Binar
       const time = state.clock.elapsedTime;
       // More dramatic floating animation
       textRef.current.position.y = position[1] + Math.sin(time * 0.8 + delay) * 0.08;
-      
+
       // Pulse effect
       const scale = 1 + Math.sin(time * 2 + delay) * 0.15 * glowIntensity;
       textRef.current.scale.set(scale, scale, scale);
@@ -37,13 +37,13 @@ function BinaryDigit({ position, digit, delay, animationProgress, angle }: Binar
 
   // Vibrant color gradient based on position and digit
   const color = useMemo(() => {
-    const hue = digit === "1" 
+    const hue = digit === "1"
       ? (angle * 360 + delay * 60) % 360  // Rotating rainbow for 1s
       : (angle * 360 + delay * 60 + 180) % 360; // Complementary colors for 0s
-    
+
     const saturation = 0.7 + glowIntensity * 0.3;
     const lightness = 0.3 + glowIntensity * 0.5;
-    
+
     return new THREE.Color().setHSL(hue / 360, saturation, lightness);
   }, [glowIntensity, digit, angle, delay]);
 
@@ -57,12 +57,15 @@ function BinaryDigit({ position, digit, delay, animationProgress, angle }: Binar
       color={color}
       anchorX="center"
       anchorY="middle"
-      emissive={color}
-      emissiveIntensity={emissiveIntensity}
       outlineWidth={0.015}
       outlineColor="#000000"
     >
       {digit}
+      <meshStandardMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={emissiveIntensity}
+      />
     </Text>
   );
 }
@@ -70,48 +73,55 @@ function BinaryDigit({ position, digit, delay, animationProgress, angle }: Binar
 function RotatingSphere({ animationProgress }: { animationProgress: number }) {
   const groupRef = useRef<THREE.Group>(null);
   const innerSphereRef = useRef<THREE.Mesh>(null);
-  
+
   // Generate binary digits in latitude-like circles
   const digits = useMemo(() => {
+    // Simple seeded pseudo-random number generator
+    const seededRandom = (seed: number) => {
+      const x = Math.sin(seed * 9999) * 10000;
+      return x - Math.floor(x);
+    };
+
     const digitsArray: Array<{
       position: [number, number, number];
       digit: string;
       delay: number;
       angle: number;
     }> = [];
-    
+
     const radius = 5; // Much larger radius
     const latitudes = 24; // More latitude lines for density
-    
+    let seedIndex = 0;
+
     for (let lat = 0; lat < latitudes; lat++) {
       const theta = (lat / (latitudes - 1)) * Math.PI;
       const sinTheta = Math.sin(theta);
       const cosTheta = Math.cos(theta);
-      
+
       // Dense ring of digits
       const digitsInLat = Math.max(12, Math.floor(48 * sinTheta));
-      
+
       for (let lon = 0; lon < digitsInLat; lon++) {
         const phi = (lon / digitsInLat) * Math.PI * 2;
-        
+
         const x = radius * sinTheta * Math.cos(phi);
         const y = radius * cosTheta;
         const z = radius * sinTheta * Math.sin(phi);
-        
+
         // Wave pattern delay - spiraling effect
         const normalizedLat = lat / latitudes;
         const normalizedLon = lon / digitsInLat;
         const delay = (normalizedLat * 5 + normalizedLon * 3) % 8;
-        
+
         digitsArray.push({
           position: [x, y, z],
-          digit: Math.random() > 0.5 ? "1" : "0",
+          digit: seededRandom(seedIndex++) > 0.5 ? "1" : "0",
           delay,
           angle: normalizedLon,
         });
       }
     }
-    
+
     return digitsArray;
   }, []);
 
@@ -121,7 +131,7 @@ function RotatingSphere({ animationProgress }: { animationProgress: number }) {
       groupRef.current.rotation.y = state.clock.elapsedTime * 0.2;
       groupRef.current.rotation.z = Math.sin(state.clock.elapsedTime * 0.15) * 0.15;
     }
-    
+
     // Pulsing inner sphere
     if (innerSphereRef.current) {
       const scale = 1 + Math.sin(state.clock.elapsedTime * 0.5) * 0.1;
@@ -143,7 +153,7 @@ function RotatingSphere({ animationProgress }: { animationProgress: number }) {
           side={THREE.BackSide}
         />
       </mesh>
-      
+
       {/* Outer glowing aura */}
       <mesh>
         <sphereGeometry args={[3.5, 32, 32]} />
@@ -169,7 +179,7 @@ function RotatingSphere({ animationProgress }: { animationProgress: number }) {
           />
         ))}
       </group>
-      
+
       {/* Sparkle particles for extra magic */}
       <Sparkles
         count={100}
@@ -214,7 +224,7 @@ export function BinarySphere() {
   return (
     <div className="w-full h-full relative overflow-hidden">
       <Canvas
-        camera={{ 
+        camera={{
           position: [0, 0, 7],  // Closer camera
           fov: 75,  // Wider field of view
           near: 0.1,
@@ -230,26 +240,26 @@ export function BinarySphere() {
         style={{ background: "transparent" }}
       >
         <color attach="background" args={["#000000"]} />
-        
+
         {/* Enhanced lighting setup */}
         <ambientLight intensity={0.3} />
-        
+
         {/* Key lights with colors */}
         <pointLight position={[10, 10, 5]} intensity={2} color="#00ffff" />
         <pointLight position={[-10, -10, -5]} intensity={2} color="#5800C3" />
         <pointLight position={[0, 10, 0]} intensity={1.5} color="#ff00ff" />
         <pointLight position={[10, -5, 10]} intensity={1.5} color="#00ff88" />
-        
+
         {/* Directional light for drama */}
         <directionalLight position={[5, 5, 5]} intensity={1} color="#ffffff" />
-        
+
         {/* The rotating binary sphere */}
         <RotatingSphere animationProgress={animationProgress} />
-        
+
         {/* Atmospheric fog */}
         <fog attach="fog" args={["#000000", 8, 25]} />
       </Canvas>
-      
+
       {/* Glow overlay effects */}
       <div className="absolute inset-0 bg-gradient-radial from-purple-500/20 via-transparent to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-radial from-cyan-500/10 via-transparent to-transparent pointer-events-none animate-pulse" />

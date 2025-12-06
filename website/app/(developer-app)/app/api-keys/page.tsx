@@ -32,7 +32,7 @@ const MOCK_KEYS: ApiKey[] = [
 ];
 
 export default function ApiKeysPage() {
-  const [keys, setKeys] = useState(MOCK_KEYS);
+  const [keys] = useState(MOCK_KEYS);
   const [visibleKeys, setVisibleKeys] = useState<Set<string>>(new Set());
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 

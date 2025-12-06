@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   Wallet, Shield, Zap, Box, X,
-  Search, Clock, 
+  Search, Clock,
   TrendingUp, ArrowUpRight,
   Twitter, Youtube, Linkedin, Instagram
 } from "lucide-react";
@@ -47,7 +47,16 @@ export default function ClaimPage() {
   const [requests, setRequests] = useState<RequestItem[]>(INITIAL_DATA);
   const [filter, setFilter] = useState<"latest" | "largest">("latest");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isStreamActive, setIsStreamActive] = useState(true);
+  const [isStreamActive] = useState(true);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
+
+  // Update current time for relative timestamps
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(Date.now());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Simulate real-time feed
   useEffect(() => {
@@ -58,7 +67,7 @@ export default function ClaimPage() {
       const basePoints = Math.floor(Math.random() * 2000) + 100;
 
       const newRequest: RequestItem = {
-        id: Math.random().toString(36).substr(2, 9),
+        id: Math.random().toString(36).substring(2, 11),
         platform: platforms[Math.floor(Math.random() * platforms.length)],
         username: `user_${Math.floor(Math.random() * 1000)}`,
         minPoints: basePoints,
@@ -282,7 +291,7 @@ export default function ClaimPage() {
                         </div>
                         <div className="flex items-center gap-4 mt-1 text-sm text-zinc-500">
                           <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" /> {Math.floor((Date.now() - item.timestamp) / 1000)}s ago
+                            <Clock className="h-3 w-3" /> {Math.floor((currentTime - item.timestamp) / 1000)}s ago
                           </span>
                         </div>
                       </div>

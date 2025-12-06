@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  User, Wallet, Key, Shield, Bell, Trash2, 
+import {
+  Wallet, Key, Shield, Bell, Trash2,
   Save, Camera, Moon, Sun, Settings, Link as LinkIcon
 } from "lucide-react";
 import { motion } from "framer-motion";

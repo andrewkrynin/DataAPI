@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { 
+import {
   CreditCard, CheckCircle, Clock, HelpCircle,
-  TrendingUp, BarChart3, Calendar
+  BarChart3, Calendar
 } from "lucide-react";
-import { motion } from "framer-motion";
 
 export default function DeveloperDashboard() {
-  const [dateRange, setDateRange] = useState("7d");
   const [selectedView, setSelectedView] = useState<"daily" | "hourly" | "response">("daily");
 
   // Mock data

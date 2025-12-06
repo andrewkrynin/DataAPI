@@ -133,7 +133,7 @@ export default function DataStreamsLanding() {
               <TrendingUp className="mb-4 h-8 w-8 text-[#C2C4F9]" />
               <h3 className="mb-3 text-xl font-semibold text-white">Real-Time Earnings</h3>
               <p className="text-zinc-400">
-                Track your earnings in real-time. See exactly how much you're earning from each claimed stream in your dashboard.
+                Track your earnings in real-time. See exactly how much you&apos;re earning from each claimed stream in your dashboard.
               </p>
             </div>
 

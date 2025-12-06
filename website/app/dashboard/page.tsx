@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CreditCard, CheckCircle, Clock, AlertTriangle } from "lucide-react";
+import { CreditCard, CheckCircle } from "lucide-react";
 import {
   DateRangePicker,
   StatsCard,
@@ -11,7 +11,6 @@ import {
 import { useAuthStore } from "@/stores/authStore";
 import { dashboardApi, creditsApi } from "@/lib/api";
 import type {
-  DashboardStats,
   ActivityEntry,
   UsageAnalytics,
   CreditsResponse,
@@ -24,7 +23,6 @@ export default function DashboardPage() {
     endDate: new Date(),
   });
 
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [credits, setCredits] = useState<CreditsResponse | null>(null);
   const [analytics, setAnalytics] = useState<UsageAnalytics | null>(null);
   const [activities, setActivities] = useState<ActivityEntry[]>([]);
@@ -45,15 +43,6 @@ export default function DashboardPage() {
         // Fetch credits from user profile or credits endpoint
         const creditsData = await creditsApi.getBalance(accessToken);
         setCredits(creditsData);
-
-        // Fetch dashboard stats
-        try {
-          const statsData = await dashboardApi.getStats(accessToken);
-          setStats(statsData);
-        } catch {
-          // Dashboard stats endpoint might not exist yet
-          console.log("Dashboard stats not available");
-        }
 
         // Fetch analytics
         try {
@@ -86,15 +75,6 @@ export default function DashboardPage() {
 
     fetchData();
   }, [accessToken, dateRange, pagination.page, pagination.limit]);
-
-  const formatDateRange = () => {
-    const options: Intl.DateTimeFormatOptions = {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    };
-    return `${dateRange.startDate.toLocaleDateString("en-US", options)} - ${dateRange.endDate.toLocaleDateString("en-US", options)}`;
-  };
 
   return (
     <div className="min-h-screen bg-[#0a0a0a]">
